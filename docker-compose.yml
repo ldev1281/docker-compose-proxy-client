@@ -1,0 +1,80 @@
+services:
+  # TODO
+  # proxy-client-socat-http:
+  #  networks:
+  #    - proxy-client-universe
+  #    - proxy-client-internal
+
+  # TODO
+  # proxy-client-socat-smtp:
+  #  networks:
+  #    - proxy-client-universe
+  #    - proxy-client-external
+
+
+  proxy-client-socat-socks5h:
+    image: ghcr.io/ldev1281/docker-socat-socks5h:latest
+    container_name: proxy-client-socks5h
+    restart: unless-stopped
+
+    environment:
+      LISTEN_PORT: ${SOCKS5_PORT}
+      TARGET_HOST: ${FRP_HOST}
+      TARGET_PORT: ${FRP_PORT}
+
+    networks:
+      - proxy-client-universe
+      - proxy-client-internal
+      - proxy-client-external
+
+  proxy-client-socat-frp:
+    image: ghcr.io/ldev1281/docker-socat-socks5h:latest
+    container_name: proxy-client-socat-frp
+    restart: unless-stopped
+
+    environment:
+      LISTEN_PORT: ${FRP_PORT}
+      TARGET_HOST: ${FRP_HOST}
+      TARGET_PORT: ${FRP_PORT}
+
+    networks:
+      - proxy-client-universe
+      - proxy-client-internal
+
+  proxy-client-frp:
+    image: ghcr.io/ldev1281/docker-frp:latest
+    container_name: proxy-client-frp
+    restart: unless-stopped
+
+    depends_on:
+      - proxy-client-socat-frp
+
+    environment:
+      - FRP_HOST=proxy-client-socat-frp
+      - FRP_PORT=${FRP_PORT}
+      - FRP_TOKEN=${FRP_TOKEN}
+
+    networks:
+      - proxy-client-internal
+
+  # TODO
+  # 
+  # proxy-cleint-caddy:
+  #  networks:
+  #    - proxy-client-internal
+  #    - proxy-client-external
+
+
+networks:
+  proxy-client-universe:
+    name: proxy-client-universe
+    driver: bridge
+
+  proxy-client-internal:
+    name: proxy-client-internal
+    driver: bridge
+    internal: true
+
+  proxy-client-external:
+    name: proxy-client-external
+    external: true
