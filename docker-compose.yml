@@ -88,11 +88,19 @@ networks:
     name: proxy-client-universe
     driver: bridge
 
-  proxy-client-internal:
-    name: proxy-client-internal
+  proxy-client-private:
+    name: proxy-client-private
     driver: bridge
     internal: true
 
-  proxy-client-external:
-    name: proxy-client-external
+  proxy-client-keycloak:
+    name: proxy-client-keycloak
+    external: true
+
+  proxy-client-firefly:
+    name: proxy-client-firefly
+    external: true
+
+  proxy-client-wekan:
+    name: proxy-client-wekan
     external: true
