@@ -80,8 +80,12 @@ services:
       SOCKS5H_USER: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_USER:-}
       SOCKS5H_PASSWORD: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD:-}
     networks:
-      - proxy-client-universe
-      - proxy-client-private
+     proxy-client-universe: {}
+     proxy-client-private:
+        aliases:
+          - smtp.mailgun.org
+
+      
 
 networks:
   proxy-client-universe:
