@@ -1,69 +1,87 @@
 services:
-  # TODO
-  # proxy-client-socat-http:
-  #  networks:
-  #    - proxy-client-universe
-  #    - proxy-client-internal
 
-  # TODO
-  # proxy-client-socat-smtp:
-  #  networks:
-  #    - proxy-client-universe
-  #    - proxy-client-external
-
-
-  proxy-client-socat-socks5h:
-    image: ghcr.io/ldev1281/docker-socat-socks5h:latest
-    container_name: proxy-client-socks5h
+  # caddy service
+  caddy:
+    image: caddy:latest
+    entrypoint: ["/usr/local/bin/caddy-entrypoint.sh"]
+    container_name: caddy
     restart: unless-stopped
-
     environment:
-      LISTEN_PORT: ${SOCKS5_PORT}
-      TARGET_HOST: ${FRP_HOST}
-      TARGET_PORT: ${FRP_PORT}
-
+      KEYCLOAK_APP_HOSTNAME: ${KEYCLOAK_APP_HOSTNAME}
+      KEYCLOAK_APP_HOST: ${KEYCLOAK_APP_HOST}
+      FIREFLY_APP_HOSTNAME: ${FIREFLY_APP_HOSTNAME}
+      FIREFLY_APP_HOST: ${FIREFLY_APP_HOST}
+      WEKAN_APP_HOSTNAME: ${WEKAN_APP_HOSTNAME}
+      WEKAN_APP_HOST: ${WEKAN_APP_HOST}
+      http_proxy: socks5://${PROXY_CLIENT_SOCAT_DANTE_USER}:${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}@proxy-client-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
+      https_proxy: socks5://${PROXY_CLIENT_SOCAT_DANTE_USER}:${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}@proxy-client-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
+      no_proxy: "localhost,127.0.0.1,::1,*.local,*.localhost,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,firefly-app,wekan-app,keycloak-app,outline-app"
+    volumes:
+      - ./usr/local/bin/caddy-entrypoint.sh:/usr/local/bin/caddy-entrypoint.sh:ro
+      - ./vol/caddy/data:/data
+      - ./vol/caddy/config:/config
     networks:
-      - proxy-client-universe
-      - proxy-client-internal
-      - proxy-client-external
+      - proxy-client-private
+      - proxy-client-keycloak
+      - proxy-client-firefly
+      - proxy-client-wekan
 
-  proxy-client-socat-frp:
-    image: ghcr.io/ldev1281/docker-socat-socks5h:latest
-    container_name: proxy-client-socat-frp
-    restart: unless-stopped
-
-    environment:
-      LISTEN_PORT: ${FRP_PORT}
-      TARGET_HOST: ${FRP_HOST}
-      TARGET_PORT: ${FRP_PORT}
-
-    networks:
-      - proxy-client-universe
-      - proxy-client-internal
-
-  proxy-client-frp:
+  # frpc for connect to frps
+  caddy-frp-client:
     image: ghcr.io/ldev1281/docker-frp:latest
-    container_name: proxy-client-frp
+    container_name: caddy-frp-client
     restart: unless-stopped
-
     depends_on:
-      - proxy-client-socat-frp
-
+      - proxy-client-socat-socks5h-frp
     environment:
-      - FRP_HOST=proxy-client-socat-frp
-      - FRP_PORT=${FRP_PORT}
-      - FRP_TOKEN=${FRP_TOKEN}
-
+      - FRP_HOST=proxy-client-socat-socks5h-frp
+      - FRP_PORT=${PROXY_CLIENT_SOCAT_FRP_PORT}
+      - FRP_TOKEN=${PROXY_CLIENT_SOCAT_FRP_TOKEN}
     networks:
-      - proxy-client-internal
+      - proxy-client-private
 
-  # TODO
-  # 
-  # proxy-cleint-caddy:
-  #  networks:
-  #    - proxy-client-internal
-  #    - proxy-client-external
+  # proxy output from caddy
+  proxy-client-socat-socks5h-dante:
+    image: ghcr.io/ldev1281/docker-socat-socks5h:latest
+    container_name: proxy-client-socat-socks5h-dante
+    restart: unless-stopped
+    environment:
+      LISTEN_PORT: ${PROXY_CLIENT_SOCAT_DANTE_PORT}
+      TARGET_HOST: ${PROXY_CLIENT_SOCAT_DANTE_HOST}
+      TARGET_PORT: ${PROXY_CLIENT_SOCAT_DANTE_PORT}
+    networks:
+      - proxy-client-universe
+      - proxy-client-private
 
+  # proxy to frp server
+  proxy-client-socat-socks5h-frp:
+    image: ghcr.io/ldev1281/docker-socat-socks5h:latest
+    container_name: proxy-client-socat-socks5h-frp
+    restart: unless-stopped
+    environment:
+      LISTEN_PORT: ${PROXY_CLIENT_SOCAT_FRP_PORT}
+      TARGET_HOST: ${PROXY_CLIENT_SOCAT_FRP_HOST}
+      TARGET_PORT: ${PROXY_CLIENT_SOCAT_FRP_PORT}
+    networks:
+      - proxy-client-universe
+      - proxy-client-private
+
+  # smtp proxy
+  proxy-client-socat-socks5h-smtp:
+    image: ghcr.io/ldev1281/docker-socat-socks5h:latest
+    container_name: proxy-client-socat-socks5h-smtp
+    restart: unless-stopped
+    environment:
+      LISTEN_PORT: ${PROXY_CLIENT_SOCAT_SMTP_PORT}
+      TARGET_HOST: ${PROXY_CLIENT_SOCAT_SMTP_HOST}
+      TARGET_PORT: ${PROXY_CLIENT_SOCAT_SMTP_PORT}
+      SOCKS5H_HOST: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_HOST:-}
+      SOCKS5H_PORT: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT:-}
+      SOCKS5H_USER: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_USER:-}
+      SOCKS5H_PASSWORD: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD:-}
+    networks:
+      - proxy-client-universe
+      - proxy-client-private
 
 networks:
   proxy-client-universe:
