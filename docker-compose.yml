@@ -13,8 +13,8 @@ services:
       FIREFLY_APP_HOST: ${FIREFLY_APP_HOST}
       WEKAN_APP_HOSTNAME: ${WEKAN_APP_HOSTNAME}
       WEKAN_APP_HOST: ${WEKAN_APP_HOST}
-      http_proxy: socks5://${PROXY_CLIENT_SOCAT_DANTE_USER}:${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}@proxy-client-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
-      https_proxy: socks5://${PROXY_CLIENT_SOCAT_DANTE_USER}:${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}@proxy-client-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
+      http_proxy: socks5://${PROXY_CLIENT_SOCAT_DANTE_USER}:${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}@pproxy-client-caddy-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
+      https_proxy: socks5://${PROXY_CLIENT_SOCAT_DANTE_USER}:${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}@proxy-client-caddy-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
       no_proxy: "localhost,127.0.0.1,::1,*.local,*.localhost,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,firefly-app,wekan-app,keycloak-app,outline-app"
     volumes:
       - ./usr/local/bin/caddy-entrypoint.sh:/usr/local/bin/caddy-entrypoint.sh:ro
@@ -41,9 +41,9 @@ services:
       - proxy-client-private
 
   # proxy output from caddy
-  proxy-client-socat-socks5h-dante:
+  proxy-client-caddy-socat-socks5h-dante:
     image: ghcr.io/ldev1281/docker-socat-socks5h:latest
-    container_name: proxy-client-socat-socks5h-dante
+    container_name: proxy-client-caddy-socat-socks5h-dante
     restart: unless-stopped
     environment:
       LISTEN_PORT: ${PROXY_CLIENT_SOCAT_DANTE_PORT}
