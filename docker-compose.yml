@@ -80,16 +80,16 @@ services:
       SOCKS5H_USER: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_USER:-}
       SOCKS5H_PASSWORD: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD:-}
     networks:
-     proxy-client-universe: {}
-     proxy-client-keycloak:
+      proxy-client-universe: {}
+      proxy-client-keycloak:
         aliases:
           - smtp.mailgun.org
-     proxy-client-firefly:
+      proxy-client-firefly:
         aliases:
           - smtp.mailgun.org
-     proxy-client-wekan:
+      proxy-client-wekan:
         aliases:
-          - smtp.mailgun.org                    
+          - smtp.mailgun.org
 
       
 
