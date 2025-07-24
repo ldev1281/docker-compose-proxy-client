@@ -75,7 +75,7 @@ if [ -n "$OUTLINE_APP_HOSTNAME" ]; then
     export OUTLINE_APP_PORT="${OUTLINE_APP_PORT:-3000}"
 
     {
-        echo "http://${OUTLINE_APP_HOSTNAME} {"
+        echo "${OUTLINE_APP_HOSTNAME} {"
         echo "    reverse_proxy ${OUTLINE_APP_HOST}:${OUTLINE_APP_PORT}"
         echo "}"
     } >>/etc/caddy/Caddyfile

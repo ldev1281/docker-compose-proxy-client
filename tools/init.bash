@@ -54,6 +54,14 @@ prompt_for_configuration() {
     WEKAN_APP_HOST=${input:-${WEKAN_APP_HOST:-wekan-app}}
 
     echo ""
+    echo "outline:"
+    read -p "OUTLINE_APP_HOSTNAME [${OUTLINE_APP_HOSTNAME:-outline.example.com}]: " input
+    OUTLINE_APP_HOSTNAME=${input:-${OUTLINE_APP_HOSTNAME:-outline.example.com}}
+
+    read -p "OUTLINE_APP_HOST [${OUTLINE_APP_HOST:-outline-app}]: " input
+    OUTLINE_APP_HOST=${input:-${OUTLINE_APP_HOST:-outline-app}}
+
+    echo ""
     echo "proxy-client-socat-socks5h-dante:"
     read -p "PROXY_CLIENT_SOCAT_DANTE_HOST [${PROXY_CLIENT_SOCAT_DANTE_HOST:-dante.onion}]: " input
     PROXY_CLIENT_SOCAT_DANTE_HOST=${input:-${PROXY_CLIENT_SOCAT_DANTE_HOST:-dante.onion}}
@@ -106,6 +114,10 @@ confirm_and_save_configuration() {
         "# wekan"
         "WEKAN_APP_HOSTNAME=${WEKAN_APP_HOSTNAME}"
         "WEKAN_APP_HOST=${WEKAN_APP_HOST}"
+        ""
+        "# outline"
+        "OUTLINE_APP_HOSTNAME=${OUTLINE_APP_HOSTNAME}"
+        "OUTLINE_APP_HOST=${OUTLINE_APP_HOST}"
         ""
         "# dante proxy"
         "PROXY_CLIENT_SOCAT_DANTE_HOST=${PROXY_CLIENT_SOCAT_DANTE_HOST}"

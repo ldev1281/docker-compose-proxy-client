@@ -20,14 +20,15 @@ Key service:
 
 - `caddy`: A lightweight, extensible web server acting as a reverse proxy with automatic HTTPS.
 
-The Caddy container is connected to the `caddy-universe` network for public access. Additional networks (e.g., `caddy-keycloak`, `caddy-firefly`, `caddy-wekan`) are used for private communication with backend services.
+The Caddy container is connected to the `caddy-universe` network for public access. Additional networks (e.g., `proxy-client-keycloak`, `proxy-client-firefly`, `proxy-client-wekan`, `proxy-client-outline`) are used for private communication with backend services.
 
 **Create required external Docker networks** (if they do not already exist):
 
 ```bash
-docker network create --driver bridge caddy-keycloak
-docker network create --driver bridge caddy-firefly
-docker network create --driver bridge caddy-wekan
+docker network create --driver bridge proxy-client-keycloak
+docker network create --driver bridge proxy-client-firefly
+docker network create --driver bridge proxy-client-wekan
+docker network create --driver bridge proxy-client-outline
    ```
 
 
@@ -48,6 +49,8 @@ Configuration Variables:
 | `FIREFLY_APP_HOST`        | Internal container hostname for Firefly service                    | `firefly-app`                   |
 | `WEKAN_APP_HOSTNAME`      | Public domain name for Wekan                                       | `wekan.example.com`             |
 | `WEKAN_APP_HOST`          | Internal container hostname for Wekan service                      | `wekan-app`                     |
+| `OUTLINE_APP_HOSTNAME`    | Public domain name for Outline                                     | `outline.example.com`           |
+| `OUTLINE_APP_HOST`        | Internal container hostname for Outline service                    | `outline-app`                   |
 | `CADDY_DANTE_HOST`        | Hostname of Dante SOCKS5 proxy container (used by Caddy)           | `caddy-socat-dante`             |
 | `CADDY_DANTE_PORT`        | Port exposed by Dante proxy container                              | `1080`                          |
 | `CADDY_DANTE_USER`        | Username for Dante SOCKS5 authentication                           | `proxyuser`                      |
