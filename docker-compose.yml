@@ -17,7 +17,7 @@ services:
       OUTLINE_APP_HOST: ${OUTLINE_APP_HOST}      
       http_proxy: socks5://${PROXY_CLIENT_SOCAT_DANTE_USER}:${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}@proxy-client-caddy-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
       https_proxy: socks5://${PROXY_CLIENT_SOCAT_DANTE_USER}:${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}@proxy-client-caddy-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
-      no_proxy: "localhost,127.0.0.1,::1,*.local,*.localhost,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,firefly-app,wekan-app,keycloak-app,outline-app"
+      no_proxy: ${NO_PROXY}
     volumes:
       - ./usr/local/bin/caddy-entrypoint.sh:/usr/local/bin/caddy-entrypoint.sh:ro
       - ./vol/caddy/data:/data

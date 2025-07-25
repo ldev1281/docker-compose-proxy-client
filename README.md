@@ -53,8 +53,9 @@ Configuration Variables:
 | `OUTLINE_APP_HOST`        | Internal container hostname for Outline service                    | `outline-app`                   |
 | `CADDY_DANTE_HOST`        | Hostname of Dante SOCKS5 proxy container (used by Caddy)           | `caddy-socat-dante`             |
 | `CADDY_DANTE_PORT`        | Port exposed by Dante proxy container                              | `1080`                          |
-| `CADDY_DANTE_USER`        | Username for Dante SOCKS5 authentication                           | `proxyuser`                      |
-| `CADDY_DANTE_PASSWORD`    | Password for Dante SOCKS5 authentication                           | `proxypass`                      |
+| `CADDY_DANTE_USER`        | Username for Dante SOCKS5 authentication                           | `proxyuser`                     |
+| `CADDY_DANTE_PASSWORD`    | Password for Dante SOCKS5 authentication                           | `proxypass`                     |
+| `NO_PROXY`                | Comma-separated list of hosts/IPs to exclude from proxy            | `localhost,127.0.0.1,...`       |
 
 
 To configure and launch all required services, run the provided script:

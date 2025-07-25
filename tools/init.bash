@@ -94,6 +94,33 @@ prompt_for_configuration() {
 
     read -p "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD [${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD:-$PROXY_CLIENT_SOCAT_DANTE_PASSWORD}]: " input
     PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD=${input:-${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD:-$PROXY_CLIENT_SOCAT_DANTE_PASSWORD}}
+
+    echo ""
+    echo "no_proxy:"
+
+    default_no_proxy_items=(
+        "localhost"
+        "127.0.0.1"
+        "::1"
+        "*.local"
+        "*.localhost"
+        "10.0.0.0/8"
+        "172.16.0.0/12"
+        "192.168.0.0/16"
+    )
+
+    # Add all *_APP_HOST variables defined so far
+    for var_name in $(compgen -v); do
+        if [[ "$var_name" =~ _APP_HOST$ ]]; then
+            value="${!var_name}"
+            [[ -n "$value" ]] && default_no_proxy_items+=("$value")
+        fi
+    done
+
+    DEFAULT_NO_PROXY=$(IFS=, ; echo "${default_no_proxy_items[*]}")
+
+    read -p "NO_PROXY [${NO_PROXY:-$DEFAULT_NO_PROXY}]: " input
+    NO_PROXY=${input:-${NO_PROXY:-$DEFAULT_NO_PROXY}}
 }
 
 confirm_and_save_configuration() {
@@ -132,6 +159,9 @@ confirm_and_save_configuration() {
         "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT=${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT}"
         "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_USER=${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_USER}"
         "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD=${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD}"
+        ""
+        "# no_proxy"
+        "NO_PROXY=${NO_PROXY}"
     )
 
     echo ""
