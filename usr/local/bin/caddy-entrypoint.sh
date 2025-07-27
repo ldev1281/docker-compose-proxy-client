@@ -71,7 +71,7 @@ if [ -n "$OUTLINE_APP_HOSTNAME" ]; then
     echo "[+] Generating config for Outline"
     echo "# Auto-generated Outline config" >>/etc/caddy/Caddyfile
 
-    export OUTLINE_APP_HOST="${OUTLINE_APP_HOST:-127.0.0.1}"
+    export OUTLINE_APP_HOST="${OUTLINE_APP_HOST:-outline-app}"
     export OUTLINE_APP_PORT="${OUTLINE_APP_PORT:-3000}"
 
     {
