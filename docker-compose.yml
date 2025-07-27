@@ -86,16 +86,16 @@ services:
       proxy-client-universe: {}
       proxy-client-keycloak:
         aliases:
-          - smtp.mailgun.org
+          - ${PROXY_CLIENT_SOCAT_SMTP_HOST}
       proxy-client-firefly:
         aliases:
-          - smtp.mailgun.org
+          - ${PROXY_CLIENT_SOCAT_SMTP_HOST}
       proxy-client-wekan:
         aliases:
-          - smtp.mailgun.org
+          - ${PROXY_CLIENT_SOCAT_SMTP_HOST}
       proxy-client-outline:
         aliases:
-          - smtp.mailgun.org
+          - ${PROXY_CLIENT_SOCAT_SMTP_HOST}
 
       
 
