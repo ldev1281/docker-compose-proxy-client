@@ -1,10 +1,10 @@
 services:
 
   # caddy service
-  caddy:
+  proxy-client-caddy:
     image: caddy:latest
     entrypoint: ["/usr/local/bin/caddy-entrypoint.sh"]
-    container_name: caddy
+    container_name: proxy-client-caddy
     restart: unless-stopped
     environment:
       KEYCLOAK_APP_HOSTNAME: ${KEYCLOAK_APP_HOSTNAME}
@@ -30,9 +30,9 @@ services:
       - proxy-client-outline
 
   # frpc for connect to frps
-  caddy-frp-client:
+  proxy-client-caddy-frp-client:
     image: ghcr.io/ldev1281/docker-frp:latest
-    container_name: caddy-frp-client
+    container_name: proxy-client-caddy-frp-client
     restart: unless-stopped
     depends_on:
       - proxy-client-socat-socks5h-frp
