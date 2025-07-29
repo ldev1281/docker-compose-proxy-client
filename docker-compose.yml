@@ -72,7 +72,7 @@ services:
   # smtp proxy
   proxy-client-socat-socks5h-smtp:
     image: ghcr.io/ldev1281/docker-socat-socks5h:latest
-    container_name: proxy-client-socat-socks5h-smtp
+    container_name: ${PROXY_CLIENT_SOCAT_SMTP_HOST}
     restart: unless-stopped
     environment:
       LISTEN_PORT: ${PROXY_CLIENT_SOCAT_SMTP_PORT}
@@ -83,19 +83,11 @@ services:
       SOCKS5H_USER: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_USER:-}
       SOCKS5H_PASSWORD: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD:-}
     networks:
-      proxy-client-universe: {}
-      proxy-client-keycloak:
-        aliases:
-          - ${PROXY_CLIENT_SOCAT_SMTP_HOST}
-      proxy-client-firefly:
-        aliases:
-          - ${PROXY_CLIENT_SOCAT_SMTP_HOST}
-      proxy-client-wekan:
-        aliases:
-          - ${PROXY_CLIENT_SOCAT_SMTP_HOST}
-      proxy-client-outline:
-        aliases:
-          - ${PROXY_CLIENT_SOCAT_SMTP_HOST}
+      - proxy-client-universe
+      - proxy-client-keycloak
+      - proxy-client-firefly
+      - proxy-client-wekan
+      - proxy-client-outline
 
       
 
