@@ -6,24 +6,24 @@ mkdir -p /etc/caddy
 
 echo -n >/etc/caddy/Caddyfile
 
-# --- Keycloak ---
-if [ -n "$KEYCLOAK_APP_HOSTNAME" ]; then
-    echo "[+] Generating config for Keycloak"
-    echo "# Auto-generated Keycloak config" >>/etc/caddy/Caddyfile
+# --- Authentik ---
+if [ -n "$AUTHENTIK_APP_HOSTNAME" ]; then
+    echo "[+] Generating config for Authentik"
+    echo "# Auto-generated Authentik config" >>/etc/caddy/Caddyfile
 
-    export KEYCLOAK_APP_HOST="${KEYCLOAK_APP_HOST:-keycloak-app}"
-    export KEYCLOAK_APP_HTTP_PORT="${KEYCLOAK_APP_HTTP_PORT:-8080}"
+    export AUTHENTIK_APP_HOST="${AUTHENTIK_APP_HOST:-authentik-app}"
+    export AUTHENTIK_APP_HTTP_PORT="${AUTHENTIK_APP_HTTP_PORT:-8080}"
 
     {
-        echo "${KEYCLOAK_APP_HOSTNAME} {"
-        echo "    reverse_proxy ${KEYCLOAK_APP_HOST}:${KEYCLOAK_APP_HTTP_PORT}"
+        echo "${AUTHENTIK_APP_HOSTNAME} {"
+        echo "    reverse_proxy ${AUTHENTIK_APP_HOST}:${AUTHENTIK_APP_HTTP_PORT}"
         echo "}"
 
     } >>/etc/caddy/Caddyfile
 
     echo "" >>/etc/caddy/Caddyfile
 else
-    echo "[ ] Skipping Keycloak — KEYCLOAK_APP_HOSTNAME is not set"
+    echo "[ ] Skipping Authentik — AUTHENTIK_APP_HOSTNAME is not set"
 fi
 
 # --- Firefly ---

@@ -30,12 +30,12 @@ prompt_for_configuration() {
     PROXY_CLIENT_SOCAT_FRP_TOKEN=${input:-${PROXY_CLIENT_SOCAT_FRP_TOKEN:-$_PROXY_CLIENT_SOCAT_FRP_TOKEN}}
 
     echo ""
-    echo "keycloak:"
-    read -p "KEYCLOAK_APP_HOSTNAME [${KEYCLOAK_APP_HOSTNAME:-auth.example.com}]: " input
-    KEYCLOAK_APP_HOSTNAME=${input:-${KEYCLOAK_APP_HOSTNAME:-auth.example.com}}
+    echo "authentik:"
+    read -p "AUTHENTIK_APP_HOSTNAME [${AUTHENTIK_APP_HOSTNAME:-auth.example.com}]: " input
+    AUTHENTIK_APP_HOSTNAME=${input:-${AUTHENTIK_APP_HOSTNAME:-auth.example.com}}
 
-    read -p "KEYCLOAK_APP_HOST [${KEYCLOAK_APP_HOST:-keycloak-app}]: " input
-    KEYCLOAK_APP_HOST=${input:-${KEYCLOAK_APP_HOST:-keycloak-app}}
+    read -p "AUTHENTIK_APP_HOST [${AUTHENTIK_APP_HOST:-Authentik-app}]: " input
+    AUTHENTIK_APP_HOST=${input:-${AUTHENTIK_APP_HOST:-Authentik-app}}
 
     echo ""
     echo "firefly:"
@@ -130,9 +130,9 @@ confirm_and_save_configuration() {
         "PROXY_CLIENT_SOCAT_FRP_PORT=${PROXY_CLIENT_SOCAT_FRP_PORT}"
         "PROXY_CLIENT_SOCAT_FRP_TOKEN=${PROXY_CLIENT_SOCAT_FRP_TOKEN}"
         ""
-        "# keycloak"
-        "KEYCLOAK_APP_HOSTNAME=${KEYCLOAK_APP_HOSTNAME}"
-        "KEYCLOAK_APP_HOST=${KEYCLOAK_APP_HOST}"
+        "# authentik"
+        "AUTHENTIK_APP_HOSTNAME=${AUTHENTIK_APP_HOSTNAME}"
+        "AUTHENTIK_APP_HOST=${AUTHENTIK_APP_HOST}"
         ""
         "# firefly"
         "FIREFLY_APP_HOSTNAME=${FIREFLY_APP_HOSTNAME}"

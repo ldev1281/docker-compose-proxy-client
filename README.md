@@ -6,26 +6,26 @@ This repository contains a Docker Compose configuration for deploying the Caddy 
 
 ### 1. Clone the Repository
 
-Clone the project to your server in the `/docker/caddy/` directory:
+Clone the project to your server in the `/docker/proxy-client-caddy/` directory:
 
 ```
-mkdir -p /docker/caddy
-cd /docker/caddy
-git clone https://github.com/ldev1281/docker-compose-caddy.git .
+mkdir -p /docker/proxy-client-caddy
+cd /docker/proxy-client-caddy
+git clone https://github.com/ldev1281/docker-compose-proxy-client.git .
 ```
 
 ### 2. Review Docker Compose Configuration
 
 Key service:
 
-- `caddy`: A lightweight, extensible web server acting as a reverse proxy with automatic HTTPS.
+- `proxy-client-caddy`: A lightweight, extensible web server acting as a reverse proxy with automatic HTTPS.
 
-The Caddy container is connected to the `caddy-universe` network for public access. Additional networks (e.g., `proxy-client-keycloak`, `proxy-client-firefly`, `proxy-client-wekan`, `proxy-client-outline`) are used for private communication with backend services.
+The Proxy-client-caddy container is connected to the `proxy-client-universe` network for public access. Additional networks (e.g., `proxy-client-authentik`, `proxy-client-firefly`, `proxy-client-wekan`, `proxy-client-outline`) are used for private communication with backend services.
 
 **Create required external Docker networks** (if they do not already exist):
 
 ```bash
-docker network create --driver bridge proxy-client-keycloak
+docker network create --driver bridge proxy-client-authentik
 docker network create --driver bridge proxy-client-firefly
 docker network create --driver bridge proxy-client-wekan
 docker network create --driver bridge proxy-client-outline
@@ -34,17 +34,17 @@ docker network create --driver bridge proxy-client-outline
 
 ### 3. Configure and Start the Application
 
-The Caddyfile `./vol/caddy/etc/caddy/Caddyfile` is dynamically generated using the environment variables.
+The Caddyfile `./vol/proxy-client-caddy/etc/caddy/Caddyfile` is dynamically generated using the environment variables.
 
 Configuration Variables:
 
 | Variable Name             | Description                                                        | Default Value                   |
-|---------------------------|--------------------------------------------------------------------|----------------------------------|
-| `FRP_HOST`                | Remote FRP (reverse proxy) host address                            | `.onion`                         |
-| `FRP_PORT`                | Port number for FRP server                                         | `7000`                           |
-| `FRP_TOKEN`               | Shared secret used for FRP authentication                          | *(use token from frps)*          |
-| `KEYCLOAK_APP_HOSTNAME`   | Public domain name for Keycloak                                    | `auth.example.com`              |
-| `KEYCLOAK_APP_HOST`       | Internal container hostname for Keycloak service                   | `keycloak-app`                  |
+|---------------------------|--------------------------------------------------------------------|---------------------------------|
+| `FRP_HOST`                | Remote FRP (reverse proxy) host address                            | `.onion`                        |
+| `FRP_PORT`                | Port number for FRP server                                         | `7000`                          |
+| `FRP_TOKEN`               | Shared secret used for FRP authentication                          | *(use token from frps)*         |
+| `AUTHENTIK_APP_HOSTNAME`  | Public domain name for Authentik                                   | `auth.example.com`              |
+| `AUTHENTIK_APP_HOST`      | Internal container hostname for Authentik service                  | `authentik-app`                 |
 | `FIREFLY_APP_HOSTNAME`    | Public domain name for Firefly III                                 | `firefly.example.com`           |
 | `FIREFLY_APP_HOST`        | Internal container hostname for Firefly service                    | `firefly-app`                   |
 | `WEKAN_APP_HOSTNAME`      | Public domain name for Wekan                                       | `wekan.example.com`             |
@@ -74,13 +74,13 @@ The script will:
 Make sure to securely store your `.env` file locally for future reference or redeployment.
 
 
-### 4. Start the Caddy Service
+### 4. Start the proxy-client Service
 
 ```
 docker compose up -d
 ```
 
-This will start Caddy and make your configured domains available.
+This will start proxy-client-caddy and make your configured domains available.
 
 ### 5. Verify Running Containers
 
@@ -88,15 +88,15 @@ This will start Caddy and make your configured domains available.
 docker compose ps
 ```
 
-You should see the `caddy` container running.
+You should see the `proxy-client-caddy` container running.
 
 ### 6. Persistent Data Storage
 
 Caddy stores ACME certificates, account keys, and other important data in the following volumes:
 
-- `./vol/caddy/data:/data` – ACME certificates and keys
-- `./vol/caddy/config:/config` – Runtime configuration and state
-- `./usr/local/bin/caddy-entrypoint.sh` – Custom entrypoint script
+- `./vol/proxy-client-caddy/data:/data` – ACME certificates and keys
+- `./vol/proxy-client-caddy/config:/config` – Runtime configuration and state
+- `./usr/local/bin/entrypoint.sh` – Custom entrypoint script
 
 Make sure these directories are backed up to avoid losing certificates and configuration.
 
@@ -105,16 +105,16 @@ Make sure these directories are backed up to avoid losing certificates and confi
 ### Example Directory Structure
 
 ```
-/docker/caddy/
+/docker/proxy-client-caddy/
 ├── docker-compose.yml
 ├── tools/
 │   └── init.bash
 ├── usr/
 │   └── local/
 │       └── bin/
-│           └── caddy-entrypoint.sh
+│           └── entrypoint.sh
 ├── vol/
-│   └── caddy/
+│   └── proxy-client-caddy/
 │       ├── data/
 │       ├── config/
 │       └── etc/

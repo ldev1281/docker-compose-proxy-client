@@ -3,28 +3,28 @@ services:
   # caddy service
   proxy-client-caddy:
     image: caddy:latest
-    entrypoint: ["/usr/local/bin/caddy-entrypoint.sh"]
+    entrypoint: ["/usr/local/bin/entrypoint.sh"]
     container_name: proxy-client-caddy
     restart: unless-stopped
     environment:
-      KEYCLOAK_APP_HOSTNAME: ${KEYCLOAK_APP_HOSTNAME}
-      KEYCLOAK_APP_HOST: ${KEYCLOAK_APP_HOST}
+      AUTHENTIK_APP_HOSTNAME: ${AUTHENTIK_APP_HOSTNAME}
+      AUTHENTIK_APP_HOST: ${AUTHENTIK_APP_HOST}
       FIREFLY_APP_HOSTNAME: ${FIREFLY_APP_HOSTNAME}
       FIREFLY_APP_HOST: ${FIREFLY_APP_HOST}
       WEKAN_APP_HOSTNAME: ${WEKAN_APP_HOSTNAME}
       WEKAN_APP_HOST: ${WEKAN_APP_HOST}
       OUTLINE_APP_HOSTNAME: ${OUTLINE_APP_HOSTNAME}
       OUTLINE_APP_HOST: ${OUTLINE_APP_HOST}      
-      http_proxy: socks5://${PROXY_CLIENT_SOCAT_DANTE_USER}:${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}@proxy-client-caddy-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
-      https_proxy: socks5://${PROXY_CLIENT_SOCAT_DANTE_USER}:${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}@proxy-client-caddy-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
+      http_proxy: socks5h://${PROXY_CLIENT_SOCAT_DANTE_USER}:${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}@proxy-client-caddy-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
+      https_proxy: socks5h://${PROXY_CLIENT_SOCAT_DANTE_USER}:${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}@proxy-client-caddy-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
       no_proxy: ${NO_PROXY}
     volumes:
-      - ./usr/local/bin/caddy-entrypoint.sh:/usr/local/bin/caddy-entrypoint.sh:ro
-      - ./vol/caddy/data:/data
-      - ./vol/caddy/config:/config
+      - ./usr/local/bin/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
+      - ./vol/proxy-client-caddy/data:/data
+      - ./vol/proxy-client-caddy/config:/config
     networks:
       - proxy-client-private
-      - proxy-client-keycloak
+      - proxy-client-authentik
       - proxy-client-firefly
       - proxy-client-wekan
       - proxy-client-outline
@@ -84,7 +84,7 @@ services:
       SOCKS5H_PASSWORD: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD:-}
     networks:
       - proxy-client-universe
-      - proxy-client-keycloak
+      - proxy-client-authentik
       - proxy-client-firefly
       - proxy-client-wekan
       - proxy-client-outline
@@ -101,8 +101,8 @@ networks:
     driver: bridge
     internal: true
 
-  proxy-client-keycloak:
-    name: proxy-client-keycloak
+  proxy-client-authentik:
+    name: proxy-client-authentik
     external: true
 
   proxy-client-firefly:
