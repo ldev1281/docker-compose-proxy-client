@@ -30,50 +30,12 @@ prompt_for_configuration() {
     PROXY_CLIENT_SOCAT_FRP_TOKEN=${input:-${PROXY_CLIENT_SOCAT_FRP_TOKEN:-$_PROXY_CLIENT_SOCAT_FRP_TOKEN}}
 
     echo ""
-    echo "authentik:"
-    read -p "AUTHENTIK_APP_HOSTNAME [${AUTHENTIK_APP_HOSTNAME:-auth.example.com}]: " input
-    AUTHENTIK_APP_HOSTNAME=${input:-${AUTHENTIK_APP_HOSTNAME:-auth.example.com}}
-
-    read -p "AUTHENTIK_APP_HOST [${AUTHENTIK_APP_HOST:-Authentik-app}]: " input
-    AUTHENTIK_APP_HOST=${input:-${AUTHENTIK_APP_HOST:-Authentik-app}}
-
-    echo ""
-    echo "firefly:"
-    read -p "FIREFLY_APP_HOSTNAME [${FIREFLY_APP_HOSTNAME:-firefly.example.com}]: " input
-    FIREFLY_APP_HOSTNAME=${input:-${FIREFLY_APP_HOSTNAME:-firefly.example.com}}
-
-    read -p "FIREFLY_APP_HOST [${FIREFLY_APP_HOST:-firefly-app}]: " input
-    FIREFLY_APP_HOST=${input:-${FIREFLY_APP_HOST:-firefly-app}}
-
-    echo ""
-    echo "wekan:"
-    read -p "WEKAN_APP_HOSTNAME [${WEKAN_APP_HOSTNAME:-wekan.example.com}]: " input
-    WEKAN_APP_HOSTNAME=${input:-${WEKAN_APP_HOSTNAME:-wekan.example.com}}
-
-    read -p "WEKAN_APP_HOST [${WEKAN_APP_HOST:-wekan-app}]: " input
-    WEKAN_APP_HOST=${input:-${WEKAN_APP_HOST:-wekan-app}}
-
-    echo ""
-    echo "outline:"
-    read -p "OUTLINE_APP_HOSTNAME [${OUTLINE_APP_HOSTNAME:-outline.example.com}]: " input
-    OUTLINE_APP_HOSTNAME=${input:-${OUTLINE_APP_HOSTNAME:-outline.example.com}}
-
-    read -p "OUTLINE_APP_HOST [${OUTLINE_APP_HOST:-outline-app}]: " input
-    OUTLINE_APP_HOST=${input:-${OUTLINE_APP_HOST:-outline-app}}
-
-    echo ""
     echo "proxy-client-socat-socks5h-dante:"
     read -p "PROXY_CLIENT_SOCAT_DANTE_HOST [${PROXY_CLIENT_SOCAT_DANTE_HOST:-dante.onion}]: " input
     PROXY_CLIENT_SOCAT_DANTE_HOST=${input:-${PROXY_CLIENT_SOCAT_DANTE_HOST:-dante.onion}}
 
     read -p "PROXY_CLIENT_SOCAT_DANTE_PORT [${PROXY_CLIENT_SOCAT_DANTE_PORT:-1080}]: " input
     PROXY_CLIENT_SOCAT_DANTE_PORT=${input:-${PROXY_CLIENT_SOCAT_DANTE_PORT:-1080}}
-
-    read -p "PROXY_CLIENT_SOCAT_DANTE_USER [${PROXY_CLIENT_SOCAT_DANTE_USER:-proxyuser}]: " input
-    PROXY_CLIENT_SOCAT_DANTE_USER=${input:-${PROXY_CLIENT_SOCAT_DANTE_USER:-proxyuser}}
-
-    read -p "PROXY_CLIENT_SOCAT_DANTE_PASSWORD [${PROXY_CLIENT_SOCAT_DANTE_PASSWORD:-proxypass}]: " input
-    PROXY_CLIENT_SOCAT_DANTE_PASSWORD=${input:-${PROXY_CLIENT_SOCAT_DANTE_PASSWORD:-proxypass}}
 
     echo ""
     echo "proxy-client-socat-socks5h-smtp:"
@@ -89,12 +51,6 @@ prompt_for_configuration() {
     read -p "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT [${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT:-$PROXY_CLIENT_SOCAT_DANTE_PORT}]: " input
     PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT=${input:-${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT:-$PROXY_CLIENT_SOCAT_DANTE_PORT}}
 
-    read -p "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_USER [${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_USER:-$PROXY_CLIENT_SOCAT_DANTE_USER}]: " input
-    PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_USER=${input:-${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_USER:-$PROXY_CLIENT_SOCAT_DANTE_USER}}
-
-    read -p "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD [${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD:-$PROXY_CLIENT_SOCAT_DANTE_PASSWORD}]: " input
-    PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD=${input:-${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD:-$PROXY_CLIENT_SOCAT_DANTE_PASSWORD}}
-
     echo ""
     echo "no_proxy:"
 
@@ -109,18 +65,53 @@ prompt_for_configuration() {
         "192.168.0.0/16"
     )
 
-    # Add all *_APP_HOST variables defined so far
+    # Add all *_APP_CONTAINER variables defined so far
     for var_name in $(compgen -v); do
-        if [[ "$var_name" =~ _APP_HOST$ ]]; then
+        if [[ "$var_name" =~ _APP_CONTAINER$ ]]; then
             value="${!var_name}"
             [[ -n "$value" ]] && default_no_proxy_items+=("$value")
         fi
     done
 
-    DEFAULT_NO_PROXY=$(IFS=, ; echo "${default_no_proxy_items[*]}")
+    DEFAULT_NO_PROXY=$(
+        IFS=,
+        echo "${default_no_proxy_items[*]}"
+    )
 
     read -p "NO_PROXY [${NO_PROXY:-$DEFAULT_NO_PROXY}]: " input
     NO_PROXY=${input:-${NO_PROXY:-$DEFAULT_NO_PROXY}}
+
+    echo ""
+    echo "authentik:"
+    read -p "AUTHENTIK_APP_HOSTNAME [${AUTHENTIK_APP_HOSTNAME:-auth.example.com}]: " input
+    AUTHENTIK_APP_HOSTNAME=${input:-${AUTHENTIK_APP_HOSTNAME:-auth.example.com}}
+
+    read -p "AUTHENTIK_APP_CONTAINER [${AUTHENTIK_APP_CONTAINER:-authentik-app}]: " input
+    AUTHENTIK_APP_CONTAINER=${input:-${AUTHENTIK_APP_CONTAINER:-authentik-app}}
+
+    echo ""
+    echo "firefly:"
+    read -p "FIREFLY_APP_HOSTNAME [${FIREFLY_APP_HOSTNAME:-firefly.example.com}]: " input
+    FIREFLY_APP_HOSTNAME=${input:-${FIREFLY_APP_HOSTNAME:-firefly.example.com}}
+
+    read -p "FIREFLY_APP_CONTAINER [${FIREFLY_APP_CONTAINER:-firefly-app}]: " input
+    FIREFLY_APP_CONTAINER=${input:-${FIREFLY_APP_CONTAINER:-firefly-app}}
+
+    echo ""
+    echo "wekan:"
+    read -p "WEKAN_APP_HOSTNAME [${WEKAN_APP_HOSTNAME:-wekan.example.com}]: " input
+    WEKAN_APP_HOSTNAME=${input:-${WEKAN_APP_HOSTNAME:-wekan.example.com}}
+
+    read -p "WEKAN_APP_CONTAINER [${WEKAN_APP_CONTAINER:-wekan-app}]: " input
+    WEKAN_APP_CONTAINER=${input:-${WEKAN_APP_CONTAINER:-wekan-app}}
+
+    echo ""
+    echo "outline:"
+    read -p "OUTLINE_APP_HOSTNAME [${OUTLINE_APP_HOSTNAME:-outline.example.com}]: " input
+    OUTLINE_APP_HOSTNAME=${input:-${OUTLINE_APP_HOSTNAME:-outline.example.com}}
+
+    read -p "OUTLINE_APP_CONTAINER [${OUTLINE_APP_CONTAINER:-outline-app}]: " input
+    OUTLINE_APP_CONTAINER=${input:-${OUTLINE_APP_CONTAINER:-outline-app}}
 }
 
 confirm_and_save_configuration() {
@@ -130,38 +121,35 @@ confirm_and_save_configuration() {
         "PROXY_CLIENT_SOCAT_FRP_PORT=${PROXY_CLIENT_SOCAT_FRP_PORT}"
         "PROXY_CLIENT_SOCAT_FRP_TOKEN=${PROXY_CLIENT_SOCAT_FRP_TOKEN}"
         ""
-        "# authentik"
-        "AUTHENTIK_APP_HOSTNAME=${AUTHENTIK_APP_HOSTNAME}"
-        "AUTHENTIK_APP_HOST=${AUTHENTIK_APP_HOST}"
-        ""
-        "# firefly"
-        "FIREFLY_APP_HOSTNAME=${FIREFLY_APP_HOSTNAME}"
-        "FIREFLY_APP_HOST=${FIREFLY_APP_HOST}"
-        ""
-        "# wekan"
-        "WEKAN_APP_HOSTNAME=${WEKAN_APP_HOSTNAME}"
-        "WEKAN_APP_HOST=${WEKAN_APP_HOST}"
-        ""
-        "# outline"
-        "OUTLINE_APP_HOSTNAME=${OUTLINE_APP_HOSTNAME}"
-        "OUTLINE_APP_HOST=${OUTLINE_APP_HOST}"
-        ""
         "# dante proxy"
         "PROXY_CLIENT_SOCAT_DANTE_HOST=${PROXY_CLIENT_SOCAT_DANTE_HOST}"
         "PROXY_CLIENT_SOCAT_DANTE_PORT=${PROXY_CLIENT_SOCAT_DANTE_PORT}"
-        "PROXY_CLIENT_SOCAT_DANTE_USER=${PROXY_CLIENT_SOCAT_DANTE_USER}"
-        "PROXY_CLIENT_SOCAT_DANTE_PASSWORD=${PROXY_CLIENT_SOCAT_DANTE_PASSWORD}"
         ""
         "# smtp proxy"
         "PROXY_CLIENT_SOCAT_SMTP_HOST=${PROXY_CLIENT_SOCAT_SMTP_HOST}"
         "PROXY_CLIENT_SOCAT_SMTP_PORT=${PROXY_CLIENT_SOCAT_SMTP_PORT}"
         "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_HOST=${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_HOST}"
         "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT=${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT}"
-        "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_USER=${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_USER}"
-        "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD=${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PASSWORD}"
         ""
         "# no_proxy"
         "NO_PROXY=${NO_PROXY}"
+        ""
+        "# authentik"
+        "AUTHENTIK_APP_HOSTNAME=${AUTHENTIK_APP_HOSTNAME}"
+        "AUTHENTIK_APP_CONTAINER=${AUTHENTIK_APP_CONTAINER}"
+        ""
+        "# firefly"
+        "FIREFLY_APP_HOSTNAME=${FIREFLY_APP_HOSTNAME}"
+        "FIREFLY_APP_CONTAINER=${FIREFLY_APP_CONTAINER}"
+        ""
+        "# wekan"
+        "WEKAN_APP_HOSTNAME=${WEKAN_APP_HOSTNAME}"
+        "WEKAN_APP_CONTAINER=${WEKAN_APP_CONTAINER}"
+        ""
+        "# outline"
+        "OUTLINE_APP_HOSTNAME=${OUTLINE_APP_HOSTNAME}"
+        "OUTLINE_APP_CONTAINER=${OUTLINE_APP_CONTAINER}"
+        ""
     )
 
     echo ""
@@ -178,7 +166,7 @@ confirm_and_save_configuration() {
         exit 1
     fi
 
-    printf "%s\n" "${CONFIG_LINES[@]}" > "$ENV_FILE"
+    printf "%s\n" "${CONFIG_LINES[@]}" >"$ENV_FILE"
     echo ".env saved to $ENV_FILE"
     echo ""
 }

@@ -2,97 +2,51 @@
 
 set -e
 
+# Default port values
+: "${AUTHENTIK_APP_PORT:=8080}"
+: "${FIREFLY_APP_PORT:=8080}"
+: "${WEKAN_APP_PORT:=8080}"
+: "${OUTLINE_APP_PORT:=3000}"
+
 mkdir -p /etc/caddy
+: > /etc/caddy/Caddyfile
 
-echo -n >/etc/caddy/Caddyfile
+SERVICES="AUTHENTIK FIREFLY WEKAN OUTLINE"
 
-# --- Authentik ---
-if [ -n "$AUTHENTIK_APP_HOSTNAME" ]; then
-    echo "[+] Generating config for Authentik"
-    echo "# Auto-generated Authentik config" >>/etc/caddy/Caddyfile
+for SERVICE in $SERVICES; do
+    HOSTNAME_VAR="${SERVICE}_APP_HOSTNAME"
+    CONTAINER_VAR="${SERVICE}_APP_CONTAINER"
+    PORT_VAR="${SERVICE}_APP_PORT"
 
-    export AUTHENTIK_APP_HOST="${AUTHENTIK_APP_HOST:-authentik-app}"
-    export AUTHENTIK_APP_HTTP_PORT="${AUTHENTIK_APP_HTTP_PORT:-8080}"
+    eval HOSTNAME_VALUE="\${${HOSTNAME_VAR}:-}"
+    if [ -n "$HOSTNAME_VALUE" ]; then
+        echo "[+] Generating config for $SERVICE"
+        echo "# Auto-generated ${SERVICE} config" >> /etc/caddy/Caddyfile
 
-    {
-        echo "${AUTHENTIK_APP_HOSTNAME} {"
-        echo "    reverse_proxy ${AUTHENTIK_APP_HOST}:${AUTHENTIK_APP_HTTP_PORT}"
-        echo "}"
 
-    } >>/etc/caddy/Caddyfile
+        eval ": \${${CONTAINER_VAR}?Missing ${CONTAINER_VAR}}"
 
-    echo "" >>/etc/caddy/Caddyfile
-else
-    echo "[ ] Skipping Authentik — AUTHENTIK_APP_HOSTNAME is not set"
-fi
-
-# --- Firefly ---
-if [ -n "$FIREFLY_APP_HOSTNAME" ]; then
-    echo "[+] Generating config for Firefly"
-    echo "# Auto-generated Firefly config" >>/etc/caddy/Caddyfile
-
-    export FIREFLY_APP_HOST="${FIREFLY_APP_HOST:-firefly-app}"
-    export FIREFLY_APP_HTTP_PORT="${FIREFLY_APP_HTTP_PORT:-8080}"
-
-    {
-        echo "${FIREFLY_APP_HOSTNAME} {"
-        echo "    reverse_proxy ${FIREFLY_APP_HOST}:${FIREFLY_APP_HTTP_PORT}"
-        echo "}"
-
-    } >>/etc/caddy/Caddyfile
-
-    echo "" >>/etc/caddy/Caddyfile
-else
-    echo "[ ] Skipping Firefly — FIREFLY_APP_HOSTNAME is not set"
-fi
-
-# --- Wekan ---
-if [ -n "$WEKAN_APP_HOSTNAME" ]; then
-    echo "[+] Generating config for Wekan"
-    echo "# Auto-generated Wekan config" >>/etc/caddy/Caddyfile
-
-    export WEKAN_APP_HOST="${WEKAN_APP_HOST:-wekan-app}"
-    export WEKAN_APP_HTTP_PORT="${WEKAN_APP_HTTP_PORT:-8080}"
-
-    {
-        echo "${WEKAN_APP_HOSTNAME} {"
-        echo "    reverse_proxy ${WEKAN_APP_HOST}:${WEKAN_APP_HTTP_PORT}"
-        echo "}"
-
-    } >>/etc/caddy/Caddyfile
-
-    echo "" >>/etc/caddy/Caddyfile
-else
-    echo "[ ] Skipping Wekan — WEKAN_APP_HOSTNAME is not set"
-fi
-
-# --- Outline example ---
-if [ -n "$OUTLINE_APP_HOSTNAME" ]; then
-    echo "[+] Generating config for Outline"
-    echo "# Auto-generated Outline config" >>/etc/caddy/Caddyfile
-
-    export OUTLINE_APP_HOST="${OUTLINE_APP_HOST:-outline-app}"
-    export OUTLINE_APP_PORT="${OUTLINE_APP_PORT:-3000}"
-
-    {
-        echo "${OUTLINE_APP_HOSTNAME} {"
-        echo "    reverse_proxy ${OUTLINE_APP_HOST}:${OUTLINE_APP_PORT}"
-        echo "}"
-    } >>/etc/caddy/Caddyfile
-
-    echo "" >>/etc/caddy/Caddyfile
-else
-    echo "[ ] Skipping Outline — OUTLINE_APP_HOSTNAME is not set"
-fi
+        eval CONTAINER_VALUE="\$$CONTAINER_VAR"
+        eval PORT_VALUE="\$$PORT_VAR"
+        {
+            echo "${HOSTNAME_VALUE} {"
+            echo "    reverse_proxy ${CONTAINER_VALUE}:${PORT_VALUE}"
+            echo "}"
+            echo ""
+        } >> /etc/caddy/Caddyfile
+    else
+        echo "[ ] Skipping $SERVICE — ${HOSTNAME_VAR} is not set or empty"
+    fi
+done
 
 if [ ! -s /etc/caddy/Caddyfile ]; then
     echo "[i] No services enabled, using default response"
-    echo "# Default response auto-generated config" >>/etc/caddy/Caddyfile
+    echo "# Default response auto-generated config" >> /etc/caddy/Caddyfile
     {
         echo ":80 {"
         echo "    respond \"Caddy is running, but no services are configured.\" 200"
         echo "}"
-    } >>/etc/caddy/Caddyfile
+    } >> /etc/caddy/Caddyfile
 fi
 
 echo "[✓] Final Caddyfile generated:"

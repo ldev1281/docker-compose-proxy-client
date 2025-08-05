@@ -38,24 +38,23 @@ The Caddyfile `./vol/proxy-client-caddy/etc/caddy/Caddyfile` is dynamically gene
 
 Configuration Variables:
 
-| Variable Name             | Description                                                        | Default Value                   |
-|---------------------------|--------------------------------------------------------------------|---------------------------------|
-| `FRP_HOST`                | Remote FRP (reverse proxy) host address                            | `.onion`                        |
-| `FRP_PORT`                | Port number for FRP server                                         | `7000`                          |
-| `FRP_TOKEN`               | Shared secret used for FRP authentication                          | *(use token from frps)*         |
-| `AUTHENTIK_APP_HOSTNAME`  | Public domain name for Authentik                                   | `auth.example.com`              |
-| `AUTHENTIK_APP_HOST`      | Internal container hostname for Authentik service                  | `authentik-app`                 |
-| `FIREFLY_APP_HOSTNAME`    | Public domain name for Firefly III                                 | `firefly.example.com`           |
-| `FIREFLY_APP_HOST`        | Internal container hostname for Firefly service                    | `firefly-app`                   |
-| `WEKAN_APP_HOSTNAME`      | Public domain name for Wekan                                       | `wekan.example.com`             |
-| `WEKAN_APP_HOST`          | Internal container hostname for Wekan service                      | `wekan-app`                     |
-| `OUTLINE_APP_HOSTNAME`    | Public domain name for Outline                                     | `outline.example.com`           |
-| `OUTLINE_APP_HOST`        | Internal container hostname for Outline service                    | `outline-app`                   |
-| `CADDY_DANTE_HOST`        | Hostname of Dante SOCKS5 proxy container (used by Caddy)           | `caddy-socat-dante`             |
-| `CADDY_DANTE_PORT`        | Port exposed by Dante proxy container                              | `1080`                          |
-| `CADDY_DANTE_USER`        | Username for Dante SOCKS5 authentication                           | `proxyuser`                     |
-| `CADDY_DANTE_PASSWORD`    | Password for Dante SOCKS5 authentication                           | `proxypass`                     |
-| `NO_PROXY`                | Comma-separated list of hosts/IPs to exclude from proxy            | `localhost,127.0.0.1,...`       |
+| Variable Name                   | Description                                                       | Default Value             |
+|--------------------------------|-------------------------------------------------------------------|---------------------------|
+| `PROXY_CLIENT_SOCAT_FRP_HOST`  | Remote FRP (reverse proxy) host address                           | `.onion`                  |
+| `PROXY_CLIENT_SOCAT_FRP_PORT`  | Port number for FRP server                                        | `7000`                    |
+| `PROXY_CLIENT_SOCAT_FRP_TOKEN` | Shared secret used for FRP authentication                         | *(use token from frps)*   |
+| `PROXY_CLIENT_SOCAT_DANTE_HOST`| Hostname of Dante SOCKS5 proxy container (used by Caddy)          | `caddy-socat-dante`       |
+| `PROXY_CLIENT_SOCAT_DANTE_PORT`| Port exposed by Dante proxy container                             | `1080`                    |
+| `NO_PROXY`                     | Comma-separated list of hosts/IPs to exclude from proxy           | `localhost,127.0.0.1,...` |
+| `AUTHENTIK_APP_HOSTNAME`       | Public domain name for Authentik                                  | `auth.example.com`        |
+| `AUTHENTIK_APP_CONTAINER`      | Internal container hostname for Authentik service                 | `authentik-app`           |
+| `FIREFLY_APP_HOSTNAME`         | Public domain name for Firefly III                                | `firefly.example.com`     |
+| `FIREFLY_APP_CONTAINER`        | Internal container hostname for Firefly service                   | `firefly-app`             |
+| `WEKAN_APP_HOSTNAME`           | Public domain name for Wekan                                      | `wekan.example.com`       |
+| `WEKAN_APP_CONTAINER`          | Internal container hostname for Wekan service                     | `wekan-app`               |
+| `OUTLINE_APP_HOSTNAME`         | Public domain name for Outline                                    | `outline.example.com`     |
+| `OUTLINE_APP_CONTAINER`        | Internal container hostname for Outline service                   | `outline-app`             |
+
 
 
 To configure and launch all required services, run the provided script:
