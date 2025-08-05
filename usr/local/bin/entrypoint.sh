@@ -3,7 +3,7 @@
 set -e
 
 # Default port values
-: "${AUTHENTIK_APP_PORT:=8080}"
+: "${AUTHENTIK_APP_PORT:=9000}"
 : "${FIREFLY_APP_PORT:=8080}"
 : "${WEKAN_APP_PORT:=8080}"
 : "${OUTLINE_APP_PORT:=3000}"
