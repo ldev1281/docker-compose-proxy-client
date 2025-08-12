@@ -25,7 +25,7 @@ services:
   # frpc for connect to frps
   proxy-client-caddy-frpc:
     image: ghcr.io/ldev1281/docker-frp:latest
-    container_name: proxy-client-caddy-frp
+    container_name: proxy-client-caddy-frpc
     restart: unless-stopped
     depends_on:
       - proxy-client-frps-host
