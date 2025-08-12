@@ -2,94 +2,88 @@ services:
 
   # caddy service
   proxy-client-caddy:
-    image: caddy:latest
+    image: caddy:${PROXY_CLIENT_CADDY_VERSION}
     entrypoint: ["/usr/local/bin/entrypoint.sh"]
     container_name: proxy-client-caddy
     restart: unless-stopped
+    depends_on:
+      - proxy-client-socks5h-host
     environment:
-      AUTHENTIK_APP_HOSTNAME: ${AUTHENTIK_APP_HOSTNAME}
-      AUTHENTIK_APP_CONTAINER: ${AUTHENTIK_APP_CONTAINER}
-      FIREFLY_APP_HOSTNAME: ${FIREFLY_APP_HOSTNAME}
-      FIREFLY_APP_CONTAINER: ${FIREFLY_APP_CONTAINER}
-      WEKAN_APP_HOSTNAME: ${WEKAN_APP_HOSTNAME}
-      WEKAN_APP_CONTAINER: ${WEKAN_APP_CONTAINER}
-      OUTLINE_APP_HOSTNAME: ${OUTLINE_APP_HOSTNAME}
-      OUTLINE_APP_CONTAINER: ${OUTLINE_APP_CONTAINER}      
-      http_proxy: socks5h://proxy-client-caddy-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
-      https_proxy: socks5h://proxy-client-caddy-socat-socks5h-dante:${PROXY_CLIENT_SOCAT_DANTE_PORT}
-      no_proxy: ${NO_PROXY}
+      AUTHENTIK_APP_HOSTNAME: ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
+      AUTHENTIK_APP_CONTAINER: ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER}
+      http_proxy: socks5h://proxy-client-socks5h-host:${PROXY_SOCKS5H_PORT}
+      https_proxy: socks5h://proxy-client-socks5h-host:${PROXY_SOCKS5H_PORT}
+      no_proxy: ${PROXY_CLIENT_CADDY_NO_PROXY}
     volumes:
       - ./usr/local/bin/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
       - ./vol/proxy-client-caddy/data:/data
       - ./vol/proxy-client-caddy/config:/config
     networks:
-      - proxy-client-private
-      - proxy-client-authentik
-      - proxy-client-firefly
-      - proxy-client-wekan
-      - proxy-client-outline
+      proxy-client-private:
+      proxy-client-authentik:
 
   # frpc for connect to frps
-  proxy-client-caddy-frp-client:
+  proxy-client-caddy-frpc:
     image: ghcr.io/ldev1281/docker-frp:latest
-    container_name: proxy-client-caddy-frp-client
+    container_name: proxy-client-caddy-frp
     restart: unless-stopped
     depends_on:
-      - proxy-client-socat-socks5h-frp
+      - proxy-client-frps-host
+      - proxy-client-caddy
     environment:
-      - FRP_HOST=proxy-client-socat-socks5h-frp
-      - FRP_PORT=${PROXY_CLIENT_SOCAT_FRP_PORT}
-      - FRP_TOKEN=${PROXY_CLIENT_SOCAT_FRP_TOKEN}
+      - FRP_HOST=proxy-client-frps-host
+      - FRP_PORT=${PROXY_FRP_PORT}
+      - FRP_TOKEN=${PROXY_FRP_TOKEN}
     networks:
-      - proxy-client-private
-
-  # proxy output from caddy
-  proxy-client-caddy-socat-socks5h-dante:
-    image: ghcr.io/ldev1281/docker-socat-socks5h:latest
-    container_name: proxy-client-caddy-socat-socks5h-dante
-    restart: unless-stopped
-    environment:
-      LISTEN_PORT: ${PROXY_CLIENT_SOCAT_DANTE_PORT}
-      TARGET_HOST: ${PROXY_CLIENT_SOCAT_DANTE_HOST}
-      TARGET_PORT: ${PROXY_CLIENT_SOCAT_DANTE_PORT}
-    networks:
-      - proxy-client-universe
-      - proxy-client-private
+      proxy-client-private:
 
   # proxy to frp server
-  proxy-client-socat-socks5h-frp:
-    image: ghcr.io/ldev1281/docker-socat-socks5h:latest
-    container_name: proxy-client-socat-socks5h-frp
+  proxy-client-frps-host:
+    image: ghcr.io/ldev1281/docker-socat-socks5:latest
+    container_name: proxy-client-frps-host
     restart: unless-stopped
     environment:
-      LISTEN_PORT: ${PROXY_CLIENT_SOCAT_FRP_PORT}
-      TARGET_HOST: ${PROXY_CLIENT_SOCAT_FRP_HOST}
-      TARGET_PORT: ${PROXY_CLIENT_SOCAT_FRP_PORT}
+      LISTEN_PORT: ${PROXY_FRP_PORT}
+      TARGET_HOST: ${PROXY_HOST}
+      TARGET_PORT: ${PROXY_FRP_PORT}
     networks:
-      - proxy-client-universe
-      - proxy-client-private
+      proxy-client-universe:
+      proxy-client-private:
+
+  # proxy output from caddy
+  proxy-client-socks5h-host:
+    image: ghcr.io/ldev1281/docker-socat-socks5:latest
+    container_name: proxy-client-socks5h-host
+    restart: unless-stopped
+    environment:
+      LISTEN_PORT: ${PROXY_SOCKS5H_PORT}
+      TARGET_HOST: ${PROXY_HOST}
+      TARGET_PORT: ${PROXY_SOCKS5H_PORT}
+    networks:
+      proxy-client-universe:
+      proxy-client-private:
 
   # smtp proxy
-  proxy-client-socat-socks5h-smtp:
-    image: ghcr.io/ldev1281/docker-socat-socks5h:latest
-    container_name: ${PROXY_CLIENT_SOCAT_SMTP_HOST}
+  proxy-client-smtp:
+    image: ghcr.io/ldev1281/docker-socat-socks5:latest
+    container_name: proxy-client-smtp
     restart: unless-stopped
     environment:
-      LISTEN_PORT: ${PROXY_CLIENT_SOCAT_SMTP_PORT}
-      TARGET_HOST: ${PROXY_CLIENT_SOCAT_SMTP_HOST}
-      TARGET_PORT: ${PROXY_CLIENT_SOCAT_SMTP_PORT}
-      SOCKS5H_HOST: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_HOST:-}
-      SOCKS5H_PORT: ${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT:-}
+      LISTEN_PORT: ${PROXY_CLIENT_SMTP_PORT}
+      TARGET_HOST: ${PROXY_CLIENT_SMTP_HOST}
+      TARGET_PORT: ${PROXY_CLIENT_SMTP_PORT}
+      SOCKS5_HOST: ${PROXY_HOST:-}
+      SOCKS5_PORT: ${PROXY_SOCKS5H_PORT:-}
     networks:
-      - proxy-client-universe
-      - proxy-client-authentik
-      - proxy-client-firefly
-      - proxy-client-wekan
-      - proxy-client-outline
+      proxy-client-universe:
+      proxy-client-authentik:
+        aliases:
+          - ${PROXY_CLIENT_SMTP_HOST}
 
-      
+
 
 networks:
+
   proxy-client-universe:
     name: proxy-client-universe
     driver: bridge
@@ -102,15 +96,4 @@ networks:
   proxy-client-authentik:
     name: proxy-client-authentik
     external: true
-
-  proxy-client-firefly:
-    name: proxy-client-firefly
-    external: true
-
-  proxy-client-wekan:
-    name: proxy-client-wekan
-    external: true
-
-  proxy-client-outline:
-    name: proxy-client-outline
-    external: true
+    

@@ -26,30 +26,6 @@ prompt_for_configuration() {
     AUTHENTIK_APP_CONTAINER=${input:-${AUTHENTIK_APP_CONTAINER:-authentik-app}}
 
     echo ""
-    echo "firefly:"
-    read -p "FIREFLY_APP_HOSTNAME [${FIREFLY_APP_HOSTNAME:-firefly.example.com}]: " input
-    FIREFLY_APP_HOSTNAME=${input:-${FIREFLY_APP_HOSTNAME:-firefly.example.com}}
-
-    read -p "FIREFLY_APP_CONTAINER [${FIREFLY_APP_CONTAINER:-firefly-app}]: " input
-    FIREFLY_APP_CONTAINER=${input:-${FIREFLY_APP_CONTAINER:-firefly-app}}
-
-    echo ""
-    echo "wekan:"
-    read -p "WEKAN_APP_HOSTNAME [${WEKAN_APP_HOSTNAME:-wekan.example.com}]: " input
-    WEKAN_APP_HOSTNAME=${input:-${WEKAN_APP_HOSTNAME:-wekan.example.com}}
-
-    read -p "WEKAN_APP_CONTAINER [${WEKAN_APP_CONTAINER:-wekan-app}]: " input
-    WEKAN_APP_CONTAINER=${input:-${WEKAN_APP_CONTAINER:-wekan-app}}
-
-    echo ""
-    echo "outline:"
-    read -p "OUTLINE_APP_HOSTNAME [${OUTLINE_APP_HOSTNAME:-outline.example.com}]: " input
-    OUTLINE_APP_HOSTNAME=${input:-${OUTLINE_APP_HOSTNAME:-outline.example.com}}
-
-    read -p "OUTLINE_APP_CONTAINER [${OUTLINE_APP_CONTAINER:-outline-app}]: " input
-    OUTLINE_APP_CONTAINER=${input:-${OUTLINE_APP_CONTAINER:-outline-app}}
-
-    echo ""
     echo "proxy-client-socat-socks5h-frp:"
     read -p "PROXY_CLIENT_SOCAT_FRP_HOST [${PROXY_CLIENT_SOCAT_FRP_HOST:-frps.onion}]: " input
     PROXY_CLIENT_SOCAT_FRP_HOST=${input:-${PROXY_CLIENT_SOCAT_FRP_HOST:-frps.onion}}
