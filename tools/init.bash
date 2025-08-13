@@ -5,6 +5,62 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="${SCRIPT_DIR}/../.env"
 VOL_DIR="${SCRIPT_DIR}/../vol/"
 
+REQUIRED_TOOLS="docker limbo-backup.bash"
+REQUIRED_NETS="proxy-client-authentik"
+BACKUP_TASKS="10-proxy-client.conf.bash"
+
+check_requirements() {
+    local missing=()
+    local cmd
+
+    for cmd in $REQUIRED_TOOLS; do
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            missing+=("$cmd")
+        fi
+    done
+
+    if ((${#missing[@]})); then
+        echo "Required tools not found:" >&2
+        for cmd in "${missing[@]}"; do
+            echo "  - $cmd" >&2
+        done
+        echo "Hint: run dev-prod-init.recipe from debian-setup-factory" >&2
+        echo "Abort"
+        exit 127
+    fi
+}
+
+create_networks() {
+    local net
+    for net in $REQUIRED_NETS; do
+        if docker network inspect "$net" >/dev/null 2>&1; then
+            echo "Required network already exists: $net"
+        else
+            echo "Creating required docker network: $net (driver=bridge)"
+            docker network create --driver bridge "$net" >/dev/null
+        fi
+    done
+}
+
+create_backup_tasks() {
+    local src_dir="${SCRIPT_DIR}/../etc/limbo-backup/rsync.conf.d"
+    local dst_dir="/etc/limbo-backup/rsync.conf.d"
+    local task
+
+    for task in $BACKUP_TASKS; do
+        local src_file="${src_dir}/${task}"
+        local dst_file="${dst_dir}/${task}"
+
+        if [[ ! -f "$src_file" ]]; then
+            echo "Error: backup task not found: $src_file" >&2
+            continue
+        fi
+
+        cp "$src_file" "$dst_file"
+        echo "Created backup task: $dst_file"
+    done
+}
+
 generate_defaults() {
     _PROXY_CLIENT_SOCAT_FRP_TOKEN=$(openssl rand -hex 32)
 }
@@ -163,6 +219,8 @@ setup_containers() {
 }
 
 # --- main ---
+check_requirements
+
 if [ -f "$ENV_FILE" ]; then
     echo ".env found. Loading..."
     load_existing_env
@@ -173,4 +231,6 @@ fi
 
 prompt_for_configuration
 confirm_and_save_configuration
+create_networks
+create_backup_tasks
 setup_containers
