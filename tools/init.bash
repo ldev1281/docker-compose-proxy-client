@@ -4,24 +4,24 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="${SCRIPT_DIR}/../.env"
 VOL_DIR="${SCRIPT_DIR}/../vol/"
+BACKUP_TASKS_SRC_DIR="${SCRIPT_DIR}/../etc/limbo-backup/rsync.conf.d"
+BACKUP_TASKS_DST_DIR="/etc/limbo-backup/rsync.conf.d"
 
 REQUIRED_TOOLS="docker limbo-backup.bash"
 REQUIRED_NETS="proxy-client-authentik"
 BACKUP_TASKS="10-proxy-client.conf.bash"
 
 check_requirements() {
-    local missing=()
-    local cmd
-
+    missed_tools=()
     for cmd in $REQUIRED_TOOLS; do
         if ! command -v "$cmd" >/dev/null 2>&1; then
-            missing+=("$cmd")
+            missed_tools+=("$cmd")
         fi
     done
 
-    if ((${#missing[@]})); then
+    if ((${#missed_tools[@]})); then
         echo "Required tools not found:" >&2
-        for cmd in "${missing[@]}"; do
+        for cmd in "${missed_tools[@]}"; do
             echo "  - $cmd" >&2
         done
         echo "Hint: run dev-prod-init.recipe from debian-setup-factory" >&2
@@ -31,7 +31,6 @@ check_requirements() {
 }
 
 create_networks() {
-    local net
     for net in $REQUIRED_NETS; do
         if docker network inspect "$net" >/dev/null 2>&1; then
             echo "Required network already exists: $net"
@@ -43,16 +42,12 @@ create_networks() {
 }
 
 create_backup_tasks() {
-    local src_dir="${SCRIPT_DIR}/../etc/limbo-backup/rsync.conf.d"
-    local dst_dir="/etc/limbo-backup/rsync.conf.d"
-    local task
-
     for task in $BACKUP_TASKS; do
-        local src_file="${src_dir}/${task}"
-        local dst_file="${dst_dir}/${task}"
+        src_file="${BACKUP_TASKS_SRC_DIR}/${task}"
+        dst_file="${BACKUP_TASKS_DST_DIR}/${task}"
 
         if [[ ! -f "$src_file" ]]; then
-            echo "Error: backup task not found: $src_file" >&2
+            echo "Warning: backup task not found: $src_file" >&2
             continue
         fi
 
