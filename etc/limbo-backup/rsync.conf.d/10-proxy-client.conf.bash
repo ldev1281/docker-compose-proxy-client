@@ -5,4 +5,5 @@ CMD_AFTER_RESTORE="docker compose --project-directory /docker/proxy-client up -d
 
 INCLUDE_PATHS=(
   "/docker/proxy-client/.env"
+  "/docker/proxy-client/vol"
 )

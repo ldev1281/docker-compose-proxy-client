@@ -6,11 +6,11 @@ This repository contains a Docker Compose configuration for deploying the Caddy 
 
 ### 1. Clone the Repository
 
-Clone the project to your server in the `/docker/proxy-client-caddy/` directory:
+Clone the project to your server in the `/docker/proxy-client/` directory:
 
 ```
-mkdir -p /docker/proxy-client-caddy
-cd /docker/proxy-client-caddy
+mkdir -p /docker/proxy-client
+cd /docker/proxy-client
 git clone https://github.com/ldev1281/docker-compose-proxy-client.git .
 ```
 
@@ -18,9 +18,9 @@ git clone https://github.com/ldev1281/docker-compose-proxy-client.git .
 
 Key service:
 
-- `proxy-client-caddy`: A lightweight, extensible web server acting as a reverse proxy with automatic HTTPS.
+- `proxy-client`: A lightweight, extensible web server acting as a reverse proxy with automatic HTTPS.
 
-The Proxy-client-caddy container is connected to the `proxy-client-universe` network for public access. Additional networks (e.g., `proxy-client-authentik`, `proxy-client-firefly`, `proxy-client-wekan`, `proxy-client-outline`) are used for private communication with backend services.
+The Proxy-client container is connected to the `proxy-client-universe` network for public access. Additional networks (e.g., `proxy-client-authentik`, `proxy-client-firefly`, `proxy-client-wekan`, `proxy-client-outline`) are used for private communication with backend services.
 
 **Create required external Docker networks** (if they do not already exist):
 
@@ -106,7 +106,7 @@ Make sure these directories are backed up to avoid losing certificates and confi
 ### Example Directory Structure
 
 ```
-/docker/proxy-client-caddy/
+/docker/proxy-client/
 ├── docker-compose.yml
 ├── tools/
 │   └── init.bash
