@@ -57,7 +57,7 @@ create_backup_tasks() {
 }
 
 generate_defaults() {
-    _PROXY_CLIENT_SOCAT_FRP_TOKEN=$(openssl rand -hex 32)
+    _PROXY_FRP_TOKEN=$(openssl rand -hex 32)
 }
 
 load_existing_env() {
@@ -69,48 +69,34 @@ load_existing_env() {
 prompt_for_configuration() {
     echo "Enter configuration values (press Enter to keep current/default value):"
     echo ""
-    echo "authentik:"
-    read -p "AUTHENTIK_APP_HOSTNAME [${AUTHENTIK_APP_HOSTNAME:-auth.example.com}]: " input
-    AUTHENTIK_APP_HOSTNAME=${input:-${AUTHENTIK_APP_HOSTNAME:-auth.example.com}}
-
-    read -p "AUTHENTIK_APP_CONTAINER [${AUTHENTIK_APP_CONTAINER:-authentik-app}]: " input
-    AUTHENTIK_APP_CONTAINER=${input:-${AUTHENTIK_APP_CONTAINER:-authentik-app}}
+    echo "Proxy settings:"
+    read -p "PROXY_HOST [${PROXY_HOST:-example.onion}]: " input
+    PROXY_HOST=${input:-${PROXY_HOST:-example.onion}}
 
     echo ""
-    echo "proxy-client-socat-socks5h-frp:"
-    read -p "PROXY_CLIENT_SOCAT_FRP_HOST [${PROXY_CLIENT_SOCAT_FRP_HOST:-frps.onion}]: " input
-    PROXY_CLIENT_SOCAT_FRP_HOST=${input:-${PROXY_CLIENT_SOCAT_FRP_HOST:-frps.onion}}
+    echo "frp:"
+    read -p "PROXY_FRP_PORT [${PROXY_FRP_PORT:-7000}]: " input
+    PROXY_FRP_PORT=${input:-${PROXY_FRP_PORT:-7000}}
 
-    read -p "PROXY_CLIENT_SOCAT_FRP_PORT [${PROXY_CLIENT_SOCAT_FRP_PORT:-7000}]: " input
-    PROXY_CLIENT_SOCAT_FRP_PORT=${input:-${PROXY_CLIENT_SOCAT_FRP_PORT:-7000}}
-
-    read -p "PROXY_CLIENT_SOCAT_FRP_TOKEN [${PROXY_CLIENT_SOCAT_FRP_TOKEN:-$_PROXY_CLIENT_SOCAT_FRP_TOKEN}]: " input
-    PROXY_CLIENT_SOCAT_FRP_TOKEN=${input:-${PROXY_CLIENT_SOCAT_FRP_TOKEN:-$_PROXY_CLIENT_SOCAT_FRP_TOKEN}}
+    read -p "PROXY_FRP_TOKEN [${PROXY_FRP_TOKEN:-$_PROXY_FRP_TOKEN}]: " input
+    PROXY_FRP_TOKEN=${input:-${PROXY_FRP_TOKEN:-$_PROXY_FRP_TOKEN}}
 
     echo ""
-    echo "proxy-client-socat-socks5h-dante:"
-    read -p "PROXY_CLIENT_SOCAT_DANTE_HOST [${PROXY_CLIENT_SOCAT_DANTE_HOST:-dante.onion}]: " input
-    PROXY_CLIENT_SOCAT_DANTE_HOST=${input:-${PROXY_CLIENT_SOCAT_DANTE_HOST:-dante.onion}}
+    echo "socks5h:"
+    read -p "PROXY_SOCKS5H_PORT [${PROXY_SOCKS5H_PORT:-1080}]: " input
+    PROXY_SOCKS5H_PORT=${input:-${PROXY_SOCKS5H_PORT:-1080}}
 
-    read -p "PROXY_CLIENT_SOCAT_DANTE_PORT [${PROXY_CLIENT_SOCAT_DANTE_PORT:-1080}]: " input
-    PROXY_CLIENT_SOCAT_DANTE_PORT=${input:-${PROXY_CLIENT_SOCAT_DANTE_PORT:-1080}}
-
+    echo "Container specific settings:"
     echo ""
-    echo "proxy-client-socat-socks5h-smtp:"
-    read -p "PROXY_CLIENT_SOCAT_SMTP_HOST [${PROXY_CLIENT_SOCAT_SMTP_HOST:-smtp.example.com}]: " input
-    PROXY_CLIENT_SOCAT_SMTP_HOST=${input:-${PROXY_CLIENT_SOCAT_SMTP_HOST:-smtp.example.com}}
+    echo "proxy-client-caddy:"
+    read -p "PROXY_CLIENT_CADDY_VERSION [${PROXY_CLIENT_CADDY_VERSION:-2.10.0}]: " input
+    PROXY_CLIENT_CADDY_VERSION=${input:-${PROXY_CLIENT_CADDY_VERSION:-2.10.0}}
 
-    read -p "PROXY_CLIENT_SOCAT_SMTP_PORT [${PROXY_CLIENT_SOCAT_SMTP_PORT:-587}]: " input
-    PROXY_CLIENT_SOCAT_SMTP_PORT=${input:-${PROXY_CLIENT_SOCAT_SMTP_PORT:-587}}
+    read -p "PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME [${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME:-authentik-app.example.com}]: " input
+    PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME=${input:-${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME:-authentik-app.example.com}}
 
-    read -p "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_HOST [${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_HOST:-$PROXY_CLIENT_SOCAT_DANTE_HOST}]: " input
-    PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_HOST=${input:-${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_HOST:-$PROXY_CLIENT_SOCAT_DANTE_HOST}}
-
-    read -p "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT [${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT:-$PROXY_CLIENT_SOCAT_DANTE_PORT}]: " input
-    PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT=${input:-${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT:-$PROXY_CLIENT_SOCAT_DANTE_PORT}}
-
-    echo ""
-    echo "no_proxy:"
+    read -p "PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER [${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER:-authentik-app}]: " input
+    PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER=${input:-${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER:-authentik-app}}
 
     default_no_proxy_items=(
         "localhost"
@@ -136,45 +122,45 @@ prompt_for_configuration() {
         echo "${default_no_proxy_items[*]}"
     )
 
-    read -p "NO_PROXY [${NO_PROXY:-$DEFAULT_NO_PROXY}]: " input
-    NO_PROXY=${input:-${NO_PROXY:-$DEFAULT_NO_PROXY}}
+    read -p "PROXY_CLIENT_CADDY_NO_PROXY [${PROXY_CLIENT_CADDY_NO_PROXY:-$DEFAULT_NO_PROXY}]: " input
+    PROXY_CLIENT_CADDY_NO_PROXY=${input:-${PROXY_CLIENT_CADDY_NO_PROXY:-$DEFAULT_NO_PROXY}}
+
+    echo ""
+    echo "proxy-client-smtp:"
+    read -p "PROXY_CLIENT_SMTP_HOST [${PROXY_CLIENT_SMTP_HOST:-smtp.mailgun.org}]: " input
+    PROXY_CLIENT_SMTP_HOST=${input:-${PROXY_CLIENT_SMTP_HOST:-smtp.mailgun.org}}
+
+    read -p "PROXY_CLIENT_SMTP_PORT [${PROXY_CLIENT_SMTP_PORT:-587}]: " input
+    PROXY_CLIENT_SMTP_PORT=${input:-${PROXY_CLIENT_SMTP_PORT:-587}}
 }
 
 confirm_and_save_configuration() {
     CONFIG_LINES=(
-        "# socat-frp"
-        "PROXY_CLIENT_SOCAT_FRP_HOST=${PROXY_CLIENT_SOCAT_FRP_HOST}"
-        "PROXY_CLIENT_SOCAT_FRP_PORT=${PROXY_CLIENT_SOCAT_FRP_PORT}"
-        "PROXY_CLIENT_SOCAT_FRP_TOKEN=${PROXY_CLIENT_SOCAT_FRP_TOKEN}"
+        "# Proxy settings"
+        "PROXY_HOST=${PROXY_HOST}"
         ""
-        "# dante proxy"
-        "PROXY_CLIENT_SOCAT_DANTE_HOST=${PROXY_CLIENT_SOCAT_DANTE_HOST}"
-        "PROXY_CLIENT_SOCAT_DANTE_PORT=${PROXY_CLIENT_SOCAT_DANTE_PORT}"
+        "# frp"
+        "PROXY_FRP_PORT=${PROXY_FRP_PORT}"
+        "PROXY_FRP_TOKEN=${PROXY_FRP_TOKEN}"
         ""
-        "# smtp proxy"
-        "PROXY_CLIENT_SOCAT_SMTP_HOST=${PROXY_CLIENT_SOCAT_SMTP_HOST}"
-        "PROXY_CLIENT_SOCAT_SMTP_PORT=${PROXY_CLIENT_SOCAT_SMTP_PORT}"
-        "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_HOST=${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_HOST}"
-        "PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT=${PROXY_CLIENT_SOCAT_SMTP_SOCKS5H_PORT}"
+        "# socks5h"
+        "PROXY_SOCKS5H_PORT=${PROXY_SOCKS5H_PORT}"
         ""
-        "# no_proxy"
-        "NO_PROXY=${NO_PROXY}"
         ""
-        "# authentik"
-        "AUTHENTIK_APP_HOSTNAME=${AUTHENTIK_APP_HOSTNAME}"
-        "AUTHENTIK_APP_CONTAINER=${AUTHENTIK_APP_CONTAINER}"
         ""
-        "# firefly"
-        "FIREFLY_APP_HOSTNAME=${FIREFLY_APP_HOSTNAME}"
-        "FIREFLY_APP_CONTAINER=${FIREFLY_APP_CONTAINER}"
+        "# Container specific settings"
+        "#"
+        "#"
         ""
-        "# wekan"
-        "WEKAN_APP_HOSTNAME=${WEKAN_APP_HOSTNAME}"
-        "WEKAN_APP_CONTAINER=${WEKAN_APP_CONTAINER}"
+        "# proxy-client-caddy"
+        "PROXY_CLIENT_CADDY_VERSION=${PROXY_CLIENT_CADDY_VERSION}"
+        "PROXY_CLIENT_CADDY_NO_PROXY=${PROXY_CLIENT_CADDY_NO_PROXY}"
+        "PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME=${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}"
+        "PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER=${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER}"
         ""
-        "# outline"
-        "OUTLINE_APP_HOSTNAME=${OUTLINE_APP_HOSTNAME}"
-        "OUTLINE_APP_CONTAINER=${OUTLINE_APP_CONTAINER}"
+        "# proxy-client-smtp"
+        "PROXY_CLIENT_SMTP_HOST=${PROXY_CLIENT_SMTP_HOST}"
+        "PROXY_CLIENT_SMTP_PORT=${PROXY_CLIENT_SMTP_PORT}"
         ""
     )
 
