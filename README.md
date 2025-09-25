@@ -114,7 +114,35 @@ Make sure these directories are backed up to avoid losing certificates and confi
 │               └── Caddyfile
 └── .env
 ```
+---
 
+## Creating a Backup Task for Proxy-Client
+
+To create a backup task for your proxy-client deployment using [`backup-tool`](https://github.com/ldev1281/backup-tool), add a new task file to `/etc/limbo-backup/rsync.conf.d/`:
+
+```bash
+sudo nano /etc/limbo-backup/rsync.conf.d/20-proxy-client.conf.bash
+```
+
+Paste the following contents:
+
+```bash
+CMD_BEFORE_BACKUP="docker compose --project-directory /docker/proxy-client down"
+CMD_AFTER_BACKUP="docker compose --project-directory /docker/proxy-client up -d"
+
+CMD_BEFORE_RESTORE="docker compose --project-directory /docker/proxy-client down || true"
+CMD_AFTER_RESTORE=(
+"docker network create --driver bridge proxy-client-authentik || true"
+"docker network create --driver bridge proxy-client-outline || true"
+"docker compose --project-directory /docker/proxy-client up -d"
+)
+
+INCLUDE_PATHS=(
+  "/docker/proxy-client"
+)
+```
+
+---
 
 ## License
 
