@@ -26,6 +26,7 @@ The Proxy-client container is connected to the `proxy-client-universe` network f
 
 ```bash
 docker network create --driver bridge proxy-client-authentik
+docker network create --driver bridge proxy-client-outline
 ```
 
 
@@ -44,6 +45,8 @@ Configuration Variables:
 | `PROXY_CLIENT_CADDY_NO_PROXY`                | Comma-separated list of hosts/IPs to exclude from proxy                     | `localhost,127.0.0.1,...`  |
 | `PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME`  | Public domain name for Authentik                                            | `authentik-app.example.com`|
 | `PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER` | Internal container hostname for Authentik service                           | `authentik-app`            |
+| `PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME`    | Public domain name for Outline                                              | `outline-app.example.com`|
+| `PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER`   | Internal container hostname for Outline service                             | `outline-app`            |
 | `PROXY_CLIENT_SMTP_HOST`                     | External SMTP server hostname                                               | `smtp.mailgun.org`         |
 | `PROXY_CLIENT_SMTP_PORT`                     | External SMTP port (usually 587 for STARTTLS or 465 for SSL)                | `587`                      |
 
@@ -111,7 +114,35 @@ Make sure these directories are backed up to avoid losing certificates and confi
 │               └── Caddyfile
 └── .env
 ```
+---
 
+## Creating a Backup Task for Proxy-Client
+
+To create a backup task for your proxy-client deployment using [`backup-tool`](https://github.com/ldev1281/backup-tool), add a new task file to `/etc/limbo-backup/rsync.conf.d/`:
+
+```bash
+sudo nano /etc/limbo-backup/rsync.conf.d/20-proxy-client.conf.bash
+```
+
+Paste the following contents:
+
+```bash
+CMD_BEFORE_BACKUP="docker compose --project-directory /docker/proxy-client down"
+CMD_AFTER_BACKUP="docker compose --project-directory /docker/proxy-client up -d"
+
+CMD_BEFORE_RESTORE="docker compose --project-directory /docker/proxy-client down || true"
+CMD_AFTER_RESTORE=(
+"docker network create --driver bridge proxy-client-authentik || true"
+"docker network create --driver bridge proxy-client-outline || true"
+"docker compose --project-directory /docker/proxy-client up -d"
+)
+
+INCLUDE_PATHS=(
+  "/docker/proxy-client"
+)
+```
+
+---
 
 ## License
 

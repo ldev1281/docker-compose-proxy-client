@@ -8,7 +8,7 @@ BACKUP_TASKS_SRC_DIR="${SCRIPT_DIR}/../etc/limbo-backup/rsync.conf.d"
 BACKUP_TASKS_DST_DIR="/etc/limbo-backup/rsync.conf.d"
 
 REQUIRED_TOOLS="docker limbo-backup.bash"
-REQUIRED_NETS="proxy-client-authentik"
+REQUIRED_NETS="proxy-client-authentik proxy-client-outline"
 BACKUP_TASKS="10-proxy-client.conf.bash"
 
 check_requirements() {
@@ -98,6 +98,12 @@ prompt_for_configuration() {
     read -p "PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER [${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER:-authentik-app}]: " input
     PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER=${input:-${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER:-authentik-app}}
 
+    read -p "PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME [${PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME:-outline-app.example.com}]: " input
+    PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME=${input:-${PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME:-outline-app.example.com}}
+
+    read -p "PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER [${PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER:-outline-app}]: " input
+    PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER=${input:-${PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER:-outline-app}}
+
     default_no_proxy_items=(
         "localhost"
         "127.0.0.1"
@@ -157,6 +163,8 @@ confirm_and_save_configuration() {
         "PROXY_CLIENT_CADDY_NO_PROXY=${PROXY_CLIENT_CADDY_NO_PROXY}"
         "PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME=${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}"
         "PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER=${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER}"
+        "PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME=${PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME}"
+        "PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER=${PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER}"
         ""
         "# proxy-client-smtp"
         "PROXY_CLIENT_SMTP_HOST=${PROXY_CLIENT_SMTP_HOST}"
