@@ -202,6 +202,7 @@ setup_containers() {
             rm -rf "${VOL_DIR:?}"/*
         fi
     fi
+    
     echo "Starting containers..."
     docker compose up -d
 
