@@ -194,9 +194,14 @@ setup_containers() {
     echo "Stopping containers and removing volumes..."
     docker compose down -v
 
-    echo "Clearing volumes..."
-    [ -d "$VOL_DIR" ] && rm -rf "${VOL_DIR:?}"/*
-
+    if [ -d "$VOL_DIR" ]; then
+        read -p "The '$VOL_DIR' directory exists. Clear it now? Warning!!! This will remove all previous configs and files. Proceed? (y/n): " CONFIRM
+        echo ""
+        if [[ "$CONFIRM" == "y" ]]; then
+            echo "Clearing '$VOL_DIR'..."
+            rm -rf "${VOL_DIR:?}"/*
+        fi
+    fi
     echo "Starting containers..."
     docker compose up -d
 
