@@ -66,6 +66,30 @@ load_existing_env() {
     set +o allexport
 }
 
+build_no_proxy_automation() {
+    local default_no_proxy_items=(
+        "localhost"
+        "127.0.0.1"
+        "::1"
+        "*.local"
+        "*.localhost"
+        "10.0.0.0/8"
+        "172.16.0.0/12"
+        "192.168.0.0/16"
+    )
+
+    for var_name in $(compgen -v); do
+        if [[ "$var_name" =~ _APP_CONTAINER$ ]]; then
+            local value="${!var_name}"
+            [[ -n "$value" ]] && default_no_proxy_items+=("$value")
+        fi
+    done
+
+    local IFS=,
+    PROXY_CLIENT_CADDY_NO_PROXY="${default_no_proxy_items[*]}"
+    export PROXY_CLIENT_CADDY_NO_PROXY
+}
+
 prompt_for_configuration() {
     echo "Enter configuration values (press Enter to keep current/default value):"
     echo ""
@@ -104,33 +128,6 @@ prompt_for_configuration() {
     read -p "PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER [${PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER:-outline-app}]: " input
     PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER=${input:-${PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER:-outline-app}}
 
-    default_no_proxy_items=(
-        "localhost"
-        "127.0.0.1"
-        "::1"
-        "*.local"
-        "*.localhost"
-        "10.0.0.0/8"
-        "172.16.0.0/12"
-        "192.168.0.0/16"
-    )
-
-    # Add all *_APP_CONTAINER variables defined so far
-    for var_name in $(compgen -v); do
-        if [[ "$var_name" =~ _APP_CONTAINER$ ]]; then
-            value="${!var_name}"
-            [[ -n "$value" ]] && default_no_proxy_items+=("$value")
-        fi
-    done
-
-    DEFAULT_NO_PROXY=$(
-        IFS=,
-        echo "${default_no_proxy_items[*]}"
-    )
-
-    read -p "PROXY_CLIENT_CADDY_NO_PROXY [${PROXY_CLIENT_CADDY_NO_PROXY:-$DEFAULT_NO_PROXY}]: " input
-    PROXY_CLIENT_CADDY_NO_PROXY=${input:-${PROXY_CLIENT_CADDY_NO_PROXY:-$DEFAULT_NO_PROXY}}
-
     echo ""
     echo "proxy-client-smtp:"
     read -p "PROXY_CLIENT_SMTP_HOST [${PROXY_CLIENT_SMTP_HOST:-smtp.mailgun.org}]: " input
@@ -138,6 +135,8 @@ prompt_for_configuration() {
 
     read -p "PROXY_CLIENT_SMTP_PORT [${PROXY_CLIENT_SMTP_PORT:-587}]: " input
     PROXY_CLIENT_SMTP_PORT=${input:-${PROXY_CLIENT_SMTP_PORT:-587}}
+
+    build_no_proxy_automation
 }
 
 confirm_and_save_configuration() {
@@ -192,11 +191,20 @@ confirm_and_save_configuration() {
 }
 
 setup_containers() {
-    echo "Stopping containers and removing volumes..."
+    echo "Stopping containers and clearing volumes..."
     docker compose down -v
 
-    echo "Clearing volumes..."
-    [ -d "$VOL_DIR" ] && rm -rf "${VOL_DIR:?}"/*
+    if [ -d "$VOL_DIR" ]; then
+        echo "The 'vol' directory exists:"
+        echo " - In case of a new install type 'y' to clear its contents. WARNING! This will remove all previous configuration files and stored data of the proxy-client."
+        echo " - In case of an upgrade/installing a new application type 'n' (or press Enter)."
+        read -p "Clear it now? (y/N): " CONFIRM
+        echo ""
+        if [[ "$CONFIRM" == "y" ]]; then
+            echo "Clearing 'vol' directory..."
+            rm -rf "${VOL_DIR:?}"/*
+        fi
+    fi
 
     echo "Starting containers..."
     docker compose up -d
