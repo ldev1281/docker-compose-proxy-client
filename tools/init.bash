@@ -195,7 +195,10 @@ setup_containers() {
     docker compose down -v
 
     if [ -d "$VOL_DIR" ]; then
-        read -p "The 'vol' directory exists. Clear it now? Warning! This will remove all previous configs and files. Proceed? (y/n) New install → press 'y'. Upgrade → press 'n' (or Enter): " CONFIRM
+        echo "The 'vol' directory exists:"
+        echo " - In case of a new install type 'y' to clear its contents. WARNING! This will remove all previous configuration files and stored data of the proxy-client."
+        echo " - In case of an upgrade/installing a new application type 'n' (or press Enter)."
+        read -p "Clear it now? (y/N): " CONFIRM
         echo ""
         if [[ "$CONFIRM" == "y" ]]; then
             echo "Clearing 'vol' directory..."
