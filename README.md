@@ -27,6 +27,7 @@ The Proxy-client container is connected to the `proxy-client-universe` network f
 ```bash
 docker network create --driver bridge proxy-client-authentik
 docker network create --driver bridge proxy-client-outline
+docker network create --driver bridge proxy-client-firefly
 ```
 
 
@@ -45,8 +46,10 @@ Configuration Variables:
 | `PROXY_CLIENT_CADDY_NO_PROXY`                | Comma-separated list of hosts/IPs to exclude from proxy                     | `localhost,127.0.0.1,...`  |
 | `PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME`  | Public domain name for Authentik                                            | `authentik-app.example.com`|
 | `PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER` | Internal container hostname for Authentik service                           | `authentik-app`            |
-| `PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME`    | Public domain name for Outline                                              | `outline-app.example.com`|
-| `PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER`   | Internal container hostname for Outline service                             | `outline-app`            |
+| `PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME`    | Public domain name for Outline                                              | `outline-app.example.com`  |
+| `PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER`   | Internal container hostname for Outline service                             | `outline-app`              |
+| `PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME`    | Public domain name for Firefly                                              | `firefly-app.example.com`  |
+| `PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER`   | Internal container hostname for Firefly service                             | `firefly-app`              |
 | `PROXY_CLIENT_SMTP_HOST`                     | External SMTP server hostname                                               | `smtp.mailgun.org`         |
 | `PROXY_CLIENT_SMTP_PORT`                     | External SMTP port (usually 587 for STARTTLS or 465 for SSL)                | `587`                      |
 
@@ -134,6 +137,7 @@ CMD_BEFORE_RESTORE="docker compose --project-directory /docker/proxy-client down
 CMD_AFTER_RESTORE=(
 "docker network create --driver bridge proxy-client-authentik || true"
 "docker network create --driver bridge proxy-client-outline || true"
+"docker network create --driver bridge proxy-client-firefly || true"
 "docker compose --project-directory /docker/proxy-client up -d"
 )
 
