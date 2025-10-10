@@ -5,11 +5,12 @@ set -e
 # Default port values
 : "${AUTHENTIK_APP_PORT:=9000}"
 : "${OUTLINE_APP_PORT:=3000}"
+: "${FIREFLY_APP_PORT:=8080}"
 
 mkdir -p /etc/caddy
 : > /etc/caddy/Caddyfile
 
-SERVICES="AUTHENTIK OUTLINE"
+SERVICES="AUTHENTIK OUTLINE FIREFLY"
 
 for SERVICE in $SERVICES; do
     HOSTNAME_VAR="${SERVICE}_APP_HOSTNAME"
