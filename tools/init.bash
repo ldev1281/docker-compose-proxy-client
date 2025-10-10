@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="${SCRIPT_DIR}/../.env"
-VOL_DIR="${SCRIPT_DIR}/../vol/"
+VOL_DIR="${SCRIPT_DIR}/../vol"
 BACKUP_TASKS_SRC_DIR="${SCRIPT_DIR}/../etc/limbo-backup/rsync.conf.d"
 BACKUP_TASKS_DST_DIR="/etc/limbo-backup/rsync.conf.d"
 
