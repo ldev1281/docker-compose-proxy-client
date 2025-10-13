@@ -11,6 +11,8 @@ REQUIRED_TOOLS="docker limbo-backup.bash"
 REQUIRED_NETS="proxy-client-authentik proxy-client-outline proxy-client-firefly"
 BACKUP_TASKS="10-proxy-client.conf.bash"
 
+CURRENT_PROXY_CLIENT_CADDY_VERSION="2.10.2"
+
 check_requirements() {
     missed_tools=()
     for cmd in $REQUIRED_TOOLS; do
@@ -113,8 +115,7 @@ prompt_for_configuration() {
     echo "Container specific settings:"
     echo ""
     echo "proxy-client-caddy:"
-    read -p "PROXY_CLIENT_CADDY_VERSION [${PROXY_CLIENT_CADDY_VERSION:-2.10.0}]: " input
-    PROXY_CLIENT_CADDY_VERSION=${input:-${PROXY_CLIENT_CADDY_VERSION:-2.10.0}}
+    PROXY_CLIENT_CADDY_VERSION=${CURRENT_PROXY_CLIENT_CADDY_VERSION}
 
     read -p "PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME [${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME:-authentik-app.example.com}]: " input
     PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME=${input:-${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME:-authentik-app.example.com}}
