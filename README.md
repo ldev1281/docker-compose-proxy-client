@@ -28,6 +28,7 @@ The Proxy-client container is connected to the `proxy-client-universe` network f
 docker network create --driver bridge proxy-client-authentik
 docker network create --driver bridge proxy-client-outline
 docker network create --driver bridge proxy-client-firefly
+docker network create --driver bridge proxy-client-youtrack
 ```
 
 
@@ -36,22 +37,25 @@ docker network create --driver bridge proxy-client-firefly
 The Caddyfile `./vol/proxy-client-caddy/etc/caddy/Caddyfile` is dynamically generated using the environment variables.
 
 Configuration Variables:
-| Variable Name                                | Description                                                                 | Default Value              |
-|----------------------------------------------|-----------------------------------------------------------------------------|----------------------------|
-| `PROXY_HOST`                                 | Hostname of the remote proxy server                                         | `example.onion`            |
-| `PROXY_FRP_PORT`                             | Port exposed by remote FRP server                                           | `7000`                     |
-| `PROXY_FRP_TOKEN`                            | Shared secret used for FRP authentication                                   | *(use token from frps)*    |
-| `PROXY_SOCKS5H_PORT`                         | Port exposed by SOCKS5 proxy server for external SMTP connection            | `1080`                     |
-| `PROXY_CLIENT_CADDY_VERSION`                 | Version of Caddy to use                                                     | `2.10.0`                   |
-| `PROXY_CLIENT_CADDY_NO_PROXY`                | Comma-separated list of hosts/IPs to exclude from proxy                     | `localhost,127.0.0.1,...`  |
-| `PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME`  | Public domain name for Authentik                                            | `authentik-app.example.com`|
-| `PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER` | Internal container hostname for Authentik service                           | `authentik-app`            |
-| `PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME`    | Public domain name for Outline                                              | `outline-app.example.com`  |
-| `PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER`   | Internal container hostname for Outline service                             | `outline-app`              |
-| `PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME`    | Public domain name for Firefly                                              | `firefly-app.example.com`  |
-| `PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER`   | Internal container hostname for Firefly service                             | `firefly-app`              |
-| `PROXY_CLIENT_SMTP_HOST`                     | External SMTP server hostname                                               | `smtp.mailgun.org`         |
-| `PROXY_CLIENT_SMTP_PORT`                     | External SMTP port (usually 587 for STARTTLS or 465 for SSL)                | `587`                      |
+
+| Variable Name                                 | Description                                                                | Default Value               |
+|-----------------------------------------------|----------------------------------------------------------------------------|-----------------------------|
+| `PROXY_HOST`                                  | Hostname of the remote proxy server                                        | `example.onion`             |
+| `PROXY_FRP_PORT`                              | Port exposed by remote FRP server                                          | `7000`                      |
+| `PROXY_FRP_TOKEN`                             | Shared secret used for FRP authentication                                  | *(use token from frps)*     |
+| `PROXY_SOCKS5H_PORT`                          | Port exposed by SOCKS5 proxy server for external SMTP connection           | `1080`                      |
+| `PROXY_CLIENT_CADDY_VERSION`                  | Version of Caddy to use                                                    | `2.10.0`                    |
+| `PROXY_CLIENT_CADDY_NO_PROXY`                 | Comma-separated list of hosts/IPs to exclude from proxy                    | `localhost,127.0.0.1,...`   |
+| `PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME`   | Public domain name for Authentik                                           | `authentik-app.example.com` |
+| `PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER`  | Internal container hostname for Authentik service                          | `authentik-app`             |
+| `PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME`     | Public domain name for Outline                                             | `outline-app.example.com`   |
+| `PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER`    | Internal container hostname for Outline service                            | `outline-app`               |
+| `PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME`     | Public domain name for Firefly                                             | `firefly-app.example.com`   |
+| `PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER`    | Internal container hostname for Firefly service                            | `firefly-app`               |
+| `PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME`    | Public domain name for YouTrack                                            | `youtrack-app.example.com`  |
+| `PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER`   | Internal container hostname for YouTrack service                           | `youtrack-app`              |
+| `PROXY_CLIENT_SMTP_HOST`                      | External SMTP server hostname                                              | `smtp.mailgun.org`          |
+| `PROXY_CLIENT_SMTP_PORT`                      | External SMTP port (usually 587 for STARTTLS or 465 for SSL)               | `587`                       |
 
 To configure and launch all required services, run the provided script:
 
@@ -138,6 +142,7 @@ CMD_AFTER_RESTORE=(
 "docker network create --driver bridge proxy-client-authentik || true"
 "docker network create --driver bridge proxy-client-outline || true"
 "docker network create --driver bridge proxy-client-firefly || true"
+"docker network create --driver bridge proxy-client-youtrack || true"
 "docker compose --project-directory /docker/proxy-client up -d"
 )
 

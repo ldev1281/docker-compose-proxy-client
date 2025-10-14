@@ -8,8 +8,10 @@ BACKUP_TASKS_SRC_DIR="${SCRIPT_DIR}/../etc/limbo-backup/rsync.conf.d"
 BACKUP_TASKS_DST_DIR="/etc/limbo-backup/rsync.conf.d"
 
 REQUIRED_TOOLS="docker limbo-backup.bash"
-REQUIRED_NETS="proxy-client-authentik proxy-client-outline proxy-client-firefly"
+REQUIRED_NETS="proxy-client-authentik proxy-client-outline proxy-client-firefly proxy-client-youtrack"
 BACKUP_TASKS="10-proxy-client.conf.bash"
+
+CURRENT_PROXY_CLIENT_CADDY_VERSION="2.10.2"
 
 check_requirements() {
     missed_tools=()
@@ -113,8 +115,7 @@ prompt_for_configuration() {
     echo "Container specific settings:"
     echo ""
     echo "proxy-client-caddy:"
-    read -p "PROXY_CLIENT_CADDY_VERSION [${PROXY_CLIENT_CADDY_VERSION:-2.10.0}]: " input
-    PROXY_CLIENT_CADDY_VERSION=${input:-${PROXY_CLIENT_CADDY_VERSION:-2.10.0}}
+    PROXY_CLIENT_CADDY_VERSION=${CURRENT_PROXY_CLIENT_CADDY_VERSION}
 
     read -p "PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME [${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME:-authentik-app.example.com}]: " input
     PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME=${input:-${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME:-authentik-app.example.com}}
@@ -133,6 +134,12 @@ prompt_for_configuration() {
 
     read -p "PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER [${PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER:-firefly-app}]: " input
     PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER=${input:-${PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER:-firefly-app}}
+
+    read -p "PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME [${PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME:-youtrack-app.example.com}]: " input
+    PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME=${input:-${PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME:-youtrack-app.example.com}}
+
+    read -p "PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER [${PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER:-youtrack-app}]: " input
+    PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER=${input:-${PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER:-youtrack-app}}    
 
     echo ""
     echo "proxy-client-smtp:"
@@ -172,6 +179,8 @@ confirm_and_save_configuration() {
         "PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER=${PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER}"
         "PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME=${PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME}"
         "PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER=${PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER}"
+        "PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME=${PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME}"
+        "PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER=${PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER}"        
         ""
         "# proxy-client-smtp"
         "PROXY_CLIENT_SMTP_HOST=${PROXY_CLIENT_SMTP_HOST}"

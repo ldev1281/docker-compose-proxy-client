@@ -6,6 +6,7 @@ CMD_AFTER_RESTORE=(
 "docker network create --driver bridge proxy-client-authentik || true"
 "docker network create --driver bridge proxy-client-outline || true"
 "docker network create --driver bridge proxy-client-firefly || true"
+"docker network create --driver bridge proxy-client-youtrack || true"
 "docker compose --project-directory /docker/proxy-client up -d"
 )
 
