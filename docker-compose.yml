@@ -96,7 +96,30 @@ services:
           - ${PROXY_CLIENT_SMTP_HOST}
       proxy-client-youtrack:
         aliases:
-          - ${PROXY_CLIENT_SMTP_HOST}          
+          - ${PROXY_CLIENT_SMTP_HOST}
+
+  # authentik proxy
+  proxy-client-authentik:
+    image: ghcr.io/ldev1281/docker-socat-socks5:latest
+    container_name: proxy-client-authentik
+    restart: unless-stopped
+    environment:
+      LISTEN_PORT: 443
+      TARGET_HOST: ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
+      TARGET_PORT: 443
+      SOCKS5_HOST: ${PROXY_HOST:-}
+      SOCKS5_PORT: ${PROXY_SOCKS5H_PORT:-}
+    networks:
+      proxy-client-universe:
+      proxy-client-outline:
+        aliases:
+          - ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
+      proxy-client-firefly:
+        aliases:
+          - ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
+      proxy-client-youtrack:
+        aliases:
+          - ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
 
 networks:
 
