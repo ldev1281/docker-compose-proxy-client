@@ -226,8 +226,8 @@ setup_containers() {
     echo "Starting containers..."
     docker compose up -d
 
-    echo "Waiting 60 seconds for initialization..."
-    sleep 60
+    echo "Waiting 20 seconds for initialization..."
+    sleep 20
 
     echo "Done!"
 }
