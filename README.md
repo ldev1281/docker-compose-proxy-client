@@ -26,7 +26,6 @@ The Proxy-client container is connected to the `proxy-client-universe` network f
 
 ```bash
 docker network create --driver bridge --internal proxy-client-authentik
-docker network create --driver bridge --internal proxy-client-outline
 docker network create --driver bridge --internal proxy-client-firefly
 docker network create --driver bridge --internal proxy-client-youtrack
 ```
@@ -48,8 +47,6 @@ Configuration Variables:
 | `PROXY_CLIENT_CADDY_NO_PROXY`                 | Comma-separated list of hosts/IPs to exclude from proxy                    | `localhost,127.0.0.1,...`   |
 | `PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME`   | Public domain name for Authentik                                           | `authentik-app.example.com` |
 | `PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER`  | Internal container hostname for Authentik service                          | `authentik-app`             |
-| `PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME`     | Public domain name for Outline                                             | `outline-app.example.com`   |
-| `PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER`    | Internal container hostname for Outline service                            | `outline-app`               |
 | `PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME`     | Public domain name for Firefly                                             | `firefly-app.example.com`   |
 | `PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER`    | Internal container hostname for Firefly service                            | `firefly-app`               |
 | `PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME`    | Public domain name for YouTrack                                            | `youtrack-app.example.com`  |
@@ -140,7 +137,6 @@ CMD_AFTER_BACKUP="docker compose --project-directory /docker/proxy-client up -d"
 CMD_BEFORE_RESTORE="docker compose --project-directory /docker/proxy-client down || true"
 CMD_AFTER_RESTORE=(
 "docker network create --driver bridge --internal proxy-client-authentik || true"
-"docker network create --driver bridge --internal proxy-client-outline || true"
 "docker network create --driver bridge --internal proxy-client-firefly || true"
 "docker network create --driver bridge --internal proxy-client-youtrack || true"
 "docker compose --project-directory /docker/proxy-client up -d"

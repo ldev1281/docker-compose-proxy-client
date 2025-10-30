@@ -11,8 +11,6 @@ services:
     environment:
       AUTHENTIK_APP_HOSTNAME: ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
       AUTHENTIK_APP_CONTAINER: ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER}
-      OUTLINE_APP_HOSTNAME: ${PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME}
-      OUTLINE_APP_CONTAINER: ${PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER}
       FIREFLY_APP_HOSTNAME: ${PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME}
       FIREFLY_APP_CONTAINER: ${PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER}
       YOUTRACK_APP_HOSTNAME: ${PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME}
@@ -27,7 +25,6 @@ services:
     networks:
       proxy-client-private:
       proxy-client-authentik:
-      proxy-client-outline:
       proxy-client-firefly:
       proxy-client-youtrack:      
 
@@ -88,9 +85,6 @@ services:
       proxy-client-authentik:
         aliases:
           - ${PROXY_CLIENT_SMTP_HOST}
-      proxy-client-outline:
-        aliases:
-          - ${PROXY_CLIENT_SMTP_HOST}
       proxy-client-firefly:
         aliases:
           - ${PROXY_CLIENT_SMTP_HOST}
@@ -111,9 +105,6 @@ services:
       SOCKS5_PORT: ${PROXY_SOCKS5H_PORT:-}
     networks:
       proxy-client-universe:
-      proxy-client-outline:
-        aliases:
-          - ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
       proxy-client-firefly:
         aliases:
           - ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
@@ -134,10 +125,6 @@ networks:
 
   proxy-client-authentik:
     name: proxy-client-authentik
-    external: true
-
-  proxy-client-outline:
-    name: proxy-client-outline
     external: true
 
   proxy-client-firefly:

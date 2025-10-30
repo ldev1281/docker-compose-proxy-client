@@ -8,7 +8,7 @@ BACKUP_TASKS_SRC_DIR="${SCRIPT_DIR}/../etc/limbo-backup/rsync.conf.d"
 BACKUP_TASKS_DST_DIR="/etc/limbo-backup/rsync.conf.d"
 
 REQUIRED_TOOLS="docker limbo-backup.bash"
-REQUIRED_NETS="proxy-client-authentik proxy-client-outline proxy-client-firefly proxy-client-youtrack"
+REQUIRED_NETS="proxy-client-authentik proxy-client-firefly proxy-client-youtrack"
 BACKUP_TASKS="10-proxy-client.conf.bash"
 
 CURRENT_PROXY_CLIENT_CADDY_VERSION="2.10.2"
@@ -123,12 +123,6 @@ prompt_for_configuration() {
     read -p "PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER [${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER:-authentik-app}]: " input
     PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER=${input:-${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER:-authentik-app}}
 
-    read -p "PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME [${PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME:-outline-app.example.com}]: " input
-    PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME=${input:-${PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME:-outline-app.example.com}}
-
-    read -p "PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER [${PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER:-outline-app}]: " input
-    PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER=${input:-${PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER:-outline-app}}
-
     read -p "PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME [${PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME:-firefly-app.example.com}]: " input
     PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME=${input:-${PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME:-firefly-app.example.com}}
 
@@ -175,8 +169,6 @@ confirm_and_save_configuration() {
         "PROXY_CLIENT_CADDY_NO_PROXY=${PROXY_CLIENT_CADDY_NO_PROXY}"
         "PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME=${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}"
         "PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER=${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER}"
-        "PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME=${PROXY_CLIENT_CADDY_OUTLINE_APP_HOSTNAME}"
-        "PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER=${PROXY_CLIENT_CADDY_OUTLINE_APP_CONTAINER}"
         "PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME=${PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME}"
         "PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER=${PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER}"
         "PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME=${PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME}"
@@ -197,10 +189,11 @@ confirm_and_save_configuration() {
 
     read -p "Save this configuration to .env? (y/n): " CONFIRM
     echo ""
-    if [[ "$CONFIRM" != "y" ]]; then
-        echo "Aborted."
-        exit 1
-    fi
+    while :; do
+        read -p "Proceed with this configuration? (y/n): " CONFIRM
+        [[ "$CONFIRM" == "y" ]] && break
+        [[ "$CONFIRM" == "n" ]] && echo "Configuration aborted by user." && exit 1
+    done
 
     printf "%s\n" "${CONFIG_LINES[@]}" >"$ENV_FILE"
     echo ".env saved to $ENV_FILE"
