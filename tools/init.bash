@@ -186,9 +186,6 @@ confirm_and_save_configuration() {
     printf "%s\n" "${CONFIG_LINES[@]}"
     echo "---------------------------"
     echo ""
-
-    read -p "Save this configuration to .env? (y/n): " CONFIRM
-    echo ""
     while :; do
         read -p "Proceed with this configuration? (y/n): " CONFIRM
         [[ "$CONFIRM" == "y" ]] && break
