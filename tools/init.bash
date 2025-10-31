@@ -192,7 +192,6 @@ confirm_and_save_configuration() {
         [[ "$CONFIRM" == "n" ]] && { echo "Configuration aborted by user."; exit 1; }
     done
 
-
     printf "%s\n" "${CONFIG_LINES[@]}" >"$ENV_FILE"
     echo ".env saved to $ENV_FILE"
     echo ""
