@@ -14,7 +14,11 @@ services:
       FIREFLY_APP_HOSTNAME: ${PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME}
       FIREFLY_APP_CONTAINER: ${PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER}
       YOUTRACK_APP_HOSTNAME: ${PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME}
-      YOUTRACK_APP_CONTAINER: ${PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER}      
+      YOUTRACK_APP_CONTAINER: ${PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER}
+      GITLAB_APP_HOSTNAME: ${PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME}
+      GITLAB_APP_CONTAINER: ${PROXY_CLIENT_CADDY_GITLAB_APP_CONTAINER}
+      REGISTRY_APP_HOSTNAME: ${PROXY_CLIENT_CADDY_REGISTRY_APP_HOSTNAME}
+      REGISTRY_APP_CONTAINER: ${PROXY_CLIENT_CADDY_REGISTRY_APP_CONTAINER}
       http_proxy: socks5h://proxy-client-socks5h:${PROXY_SOCKS5H_PORT}
       https_proxy: socks5h://proxy-client-socks5h:${PROXY_SOCKS5H_PORT}
       no_proxy: ${PROXY_CLIENT_CADDY_NO_PROXY}
@@ -26,7 +30,8 @@ services:
       proxy-client-private:
       proxy-client-authentik:
       proxy-client-firefly:
-      proxy-client-youtrack:      
+      proxy-client-youtrack:
+      proxy-client-gitlab:
 
   # frpc for connect to frps
   proxy-client-caddy-frpc:
@@ -91,6 +96,9 @@ services:
       proxy-client-youtrack:
         aliases:
           - ${PROXY_CLIENT_SMTP_HOST}
+      proxy-client-gitlab:
+        aliases:
+          - ${PROXY_CLIENT_SMTP_HOST}
 
   # authentik proxy
   proxy-client-authentik:
@@ -109,6 +117,9 @@ services:
         aliases:
           - ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
       proxy-client-youtrack:
+        aliases:
+          - ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
+      proxy-client-gitlab:
         aliases:
           - ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
 
@@ -133,4 +144,8 @@ networks:
 
   proxy-client-youtrack:
     name: proxy-client-youtrack
+    external: true
+
+  proxy-client-gitlab:
+    name: proxy-client-gitlab
     external: true
