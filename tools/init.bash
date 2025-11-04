@@ -80,26 +80,22 @@ build_no_proxy_automation() {
         "192.168.0.0/16"
     )
 
+    local items=("${default_no_proxy_items[@]}")
     for var_name in $(compgen -v); do
-        if [[ "$var_name" =~ _APP_CONTAINER$ ]]; then
-            local value="${!var_name}"
-            [[ -n "$value" ]] && default_no_proxy_items+=("$value")
-        fi
+        [[ "$var_name" =~ _APP_CONTAINER$ ]] && [[ -n "${!var_name-}" ]] && items+=("${!var_name}")
     done
 
-    declare -A seen=()
+    declare -A seen
     local ordered_unique=()
-
-    for item in "${default_no_proxy_items[@]}"; do
-        if [[ -z "${seen[$item]}" ]]; then
+    for item in "${items[@]}"; do
+        if [[ ! -v "seen[$item]" ]]; then
             seen["$item"]=1
             ordered_unique+=("$item")
         fi
     done
 
-    local IFS=,
-    PROXY_CLIENT_CADDY_NO_PROXY="${ordered_unique[*]}"
-    export PROXY_CLIENT_CADDY_NO_PROXY
+    IFS=, 
+    export PROXY_CLIENT_CADDY_NO_PROXY="${ordered_unique[*]}"
 }
 
 prompt_for_configuration() {
