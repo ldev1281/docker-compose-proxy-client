@@ -87,8 +87,14 @@ build_no_proxy_automation() {
         fi
     done
 
-    local IFS=,
-    PROXY_CLIENT_CADDY_NO_PROXY="${default_no_proxy_items[*]}"
+    declare -A unique_items=()
+    for item in "${default_no_proxy_items[@]}"; do
+        unique_items["$item"]=1
+    done
+
+    local no_proxy_list=("${!unique_items[@]}")
+    IFS=,
+    PROXY_CLIENT_CADDY_NO_PROXY="${no_proxy_list[*]}"
     export PROXY_CLIENT_CADDY_NO_PROXY
 }
 
