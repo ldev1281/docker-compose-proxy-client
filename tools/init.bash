@@ -8,7 +8,7 @@ BACKUP_TASKS_SRC_DIR="${SCRIPT_DIR}/../etc/limbo-backup/rsync.conf.d"
 BACKUP_TASKS_DST_DIR="/etc/limbo-backup/rsync.conf.d"
 
 REQUIRED_TOOLS="docker limbo-backup.bash"
-REQUIRED_NETS="proxy-client-authentik proxy-client-firefly proxy-client-youtrack"
+REQUIRED_NETS="proxy-client-authentik proxy-client-firefly proxy-client-youtrack proxy-client-gitlab"
 BACKUP_TASKS="10-proxy-client.conf.bash"
 
 CURRENT_PROXY_CLIENT_CADDY_VERSION="2.10.2"
@@ -80,16 +80,22 @@ build_no_proxy_automation() {
         "192.168.0.0/16"
     )
 
+    local items=("${default_no_proxy_items[@]}")
     for var_name in $(compgen -v); do
-        if [[ "$var_name" =~ _APP_CONTAINER$ ]]; then
-            local value="${!var_name}"
-            [[ -n "$value" ]] && default_no_proxy_items+=("$value")
+        [[ "$var_name" =~ _APP_CONTAINER$ ]] && [[ -n "${!var_name-}" ]] && items+=("${!var_name}")
+    done
+
+    declare -A seen
+    local ordered_unique=()
+    for item in "${items[@]}"; do
+        if [[ ! -v "seen[$item]" ]]; then
+            seen["$item"]=1
+            ordered_unique+=("$item")
         fi
     done
 
-    local IFS=,
-    PROXY_CLIENT_CADDY_NO_PROXY="${default_no_proxy_items[*]}"
-    export PROXY_CLIENT_CADDY_NO_PROXY
+    IFS=, 
+    export PROXY_CLIENT_CADDY_NO_PROXY="${ordered_unique[*]}"
 }
 
 prompt_for_configuration() {
@@ -133,7 +139,19 @@ prompt_for_configuration() {
     PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME=${input:-${PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME:-youtrack-app.example.com}}
 
     read -p "PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER [${PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER:-youtrack-app}]: " input
-    PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER=${input:-${PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER:-youtrack-app}}    
+    PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER=${input:-${PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER:-youtrack-app}}
+
+    read -p "PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME [${PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME:-gitlab-app.example.com}]: " input
+    PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME=${input:-${PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME:-gitlab-app.example.com}}
+
+    read -p "PROXY_CLIENT_CADDY_GITLAB_APP_CONTAINER [${PROXY_CLIENT_CADDY_GITLAB_APP_CONTAINER:-gitlab-app}]: " input
+    PROXY_CLIENT_CADDY_GITLAB_APP_CONTAINER=${input:-${PROXY_CLIENT_CADDY_GITLAB_APP_CONTAINER:-gitlab-app}}
+
+    read -p "PROXY_CLIENT_CADDY_REGISTRY_APP_HOSTNAME [${PROXY_CLIENT_CADDY_REGISTRY_APP_HOSTNAME:-registry.example.com}]: " input
+    PROXY_CLIENT_CADDY_REGISTRY_APP_HOSTNAME=${input:-${PROXY_CLIENT_CADDY_REGISTRY_APP_HOSTNAME:-registry.example.com}}
+
+    read -p "PROXY_CLIENT_CADDY_REGISTRY_APP_CONTAINER [${PROXY_CLIENT_CADDY_REGISTRY_APP_CONTAINER:-gitlab-app}]: " input
+    PROXY_CLIENT_CADDY_REGISTRY_APP_CONTAINER=${input:-${PROXY_CLIENT_CADDY_REGISTRY_APP_CONTAINER:-gitlab-app}}
 
     echo ""
     echo "proxy-client-smtp:"
@@ -172,7 +190,11 @@ confirm_and_save_configuration() {
         "PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME=${PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME}"
         "PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER=${PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER}"
         "PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME=${PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME}"
-        "PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER=${PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER}"        
+        "PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER=${PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER}"
+        "PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME=${PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME}"
+        "PROXY_CLIENT_CADDY_GITLAB_APP_CONTAINER=${PROXY_CLIENT_CADDY_GITLAB_APP_CONTAINER}"
+        "PROXY_CLIENT_CADDY_REGISTRY_APP_HOSTNAME=${PROXY_CLIENT_CADDY_REGISTRY_APP_HOSTNAME}"
+        "PROXY_CLIENT_CADDY_REGISTRY_APP_CONTAINER=${PROXY_CLIENT_CADDY_REGISTRY_APP_CONTAINER}"
         ""
         "# proxy-client-smtp"
         "PROXY_CLIENT_SMTP_HOST=${PROXY_CLIENT_SMTP_HOST}"

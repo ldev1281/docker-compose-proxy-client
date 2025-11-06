@@ -6,6 +6,7 @@ CMD_AFTER_RESTORE=(
 "docker network create --driver bridge --internal proxy-client-authentik || true"
 "docker network create --driver bridge --internal proxy-client-firefly || true"
 "docker network create --driver bridge --internal proxy-client-youtrack || true"
+"docker network create --driver bridge --internal proxy-client-gitlab || true"
 "docker compose --project-directory /docker/proxy-client up -d"
 )
 
