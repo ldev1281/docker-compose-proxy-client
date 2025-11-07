@@ -94,7 +94,7 @@ build_no_proxy_automation() {
         fi
     done
 
-    IFS=, 
+    local IFS=, 
     export PROXY_CLIENT_CADDY_NO_PROXY="${ordered_unique[*]}"
 }
 
