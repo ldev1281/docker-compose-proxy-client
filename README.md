@@ -20,7 +20,9 @@ Key service:
 
 - `proxy-client-caddy`: A lightweight, extensible web server acting as a reverse proxy with automatic HTTPS.
 
-The Proxy-client container is connected to the `proxy-client-universe` network for public access. Additional networks (e.g., `proxy-client-authentik`) are used for private communication with backend services.
+The `proxy-client-caddy` container does not access the internet directly.
+Instead, it sends all external requests through the internal `proxy-client-private` network
+to a set of proxy-containers:
 
 **Create required external Docker networks** (if they do not already exist):
 
@@ -38,26 +40,28 @@ The Caddyfile `./vol/proxy-client-caddy/etc/caddy/Caddyfile` is dynamically gene
 
 Configuration Variables:
 
-| Variable Name                                 | Description                                                                | Default Value               |
-|-----------------------------------------------|----------------------------------------------------------------------------|-----------------------------|
-| `PROXY_HOST`                                  | Hostname of the remote proxy server                                        | `example.onion`             |
-| `PROXY_FRP_PORT`                              | Port exposed by remote FRP server                                          | `7000`                      |
-| `PROXY_FRP_TOKEN`                             | Shared secret used for FRP authentication                                  | *(use token from frps)*     |
-| `PROXY_SOCKS5H_PORT`                          | Port exposed by SOCKS5 proxy server for external SMTP connection           | `1080`                      |
-| `PROXY_CLIENT_CADDY_VERSION`                  | Version of Caddy to use                                                    | `2.10.0`                    |
-| `PROXY_CLIENT_CADDY_NO_PROXY`                 | Comma-separated list of hosts/IPs to exclude from proxy                    | `localhost,127.0.0.1,...`   |
-| `PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME`   | Public domain name for Authentik                                           | `authentik-app.example.com` |
-| `PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER`  | Internal container hostname for Authentik service                          | `authentik-app`             |
-| `PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME`     | Public domain name for Firefly                                             | `firefly-app.example.com`   |
-| `PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER`    | Internal container hostname for Firefly service                            | `firefly-app`               |
-| `PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME`    | Public domain name for YouTrack                                            | `youtrack-app.example.com`  |
-| `PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER`   | Internal container hostname for YouTrack service                           | `youtrack-app`              |
-| `PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME`      | Public domain name for GitLab                                              | `gitlab-app.example.com`    |
-| `PROXY_CLIENT_CADDY_GITLAB_APP_CONTAINER`     | Internal container hostname for GitLab service                             | `gitlab-app`                |
-| `PROXY_CLIENT_CADDY_REGISTRY_APP_HOSTNAME`    | Public domain name for Docker Registry                                     | `registry.example.com`      |
-| `PROXY_CLIENT_CADDY_REGISTRY_APP_CONTAINER`   | Internal container hostname for Docker Registry service                    | `gitlab-app`                |
-| `PROXY_CLIENT_SMTP_HOST`                      | External SMTP server hostname                                              | `smtp.mailgun.org`          |
-| `PROXY_CLIENT_SMTP_PORT`                      | External SMTP port (usually 587 for STARTTLS or 465 for SSL)               | `587`                       |
+| Variable Name                                 | Description                                                                | Default Value                        |
+|-----------------------------------------------|----------------------------------------------------------------------------|--------------------------------------|
+| `PROXY_HOST`                                  | Hostname of the remote proxy server                                        | `example.onion`                      |
+| `PROXY_FRP_PORT`                              | Port exposed by remote FRP server                                          | `7000`                               |
+| `PROXY_FRP_TOKEN`                             | Shared secret used for FRP authentication                                  | *(use token from frps)*              |
+| `PROXY_SOCKS5H_PORT`                          | Port exposed by SOCKS5h proxy server for external connections              | `1080`                               |
+| `PROXY_CLIENT_CADDY_VERSION`                  | Version of Caddy to use                                                    | `2.10.0`                             |
+| `PROXY_CLIENT_CADDY_NO_PROXY`                 | Comma-separated list of hosts/IPs to exclude from proxy                    | `localhost,127.0.0.1,...`            |
+| `PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME`   | Public domain name for Authentik                                           | `authentik-app.example.com`          |
+| `PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER`  | Internal container hostname for Authentik service                          | `authentik-app`                      |
+| `PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME`     | Public domain name for Firefly                                             | `firefly-app.example.com`            |
+| `PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER`    | Internal container hostname for Firefly service                            | `firefly-app`                        |
+| `PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME`    | Public domain name for YouTrack                                            | `youtrack-app.example.com`           |
+| `PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER`   | Internal container hostname for YouTrack service                           | `youtrack-app`                       |
+| `PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME`      | Public domain name for GitLab                                              | `gitlab-app.example.com`             |
+| `PROXY_CLIENT_CADDY_GITLAB_APP_CONTAINER`     | Internal container hostname for GitLab service                             | `gitlab-app`                         |
+| `PROXY_CLIENT_CADDY_REGISTRY_APP_HOSTNAME`    | Public domain name for Docker Registry                                     | `registry.example.com`               |
+| `PROXY_CLIENT_CADDY_REGISTRY_APP_CONTAINER`   | Internal container hostname for Docker Registry service                    | `gitlab-app`                         |
+| `PROXY_CLIENT_SMTP_HOST`                      | External SMTP server hostname                                              | `smtp.mailgun.org`                   |
+| `PROXY_CLIENT_SMTP_PORT`                      | External SMTP port (587 STARTTLS / 465 SSL)                                | `587`                                |
+| `PROXY_CLIENT_LETSENCRYPT_HOST`               | Hostname of Let’s Encrypt ACME API (used for certificate requests)         | `acme-v02.api.letsencrypt.org`       |
+| `PROXY_CLIENT_LETSENCRYPT_PORT`               | Port for Let’s Encrypt ACME API                                            | `443`                                |
 
 To configure and launch all required services, run the provided script:
 
