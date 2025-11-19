@@ -18,7 +18,7 @@ git clone https://github.com/ldev1281/docker-compose-proxy-client.git .
 
 Key service:
 
-- `proxy-client`: A lightweight, extensible web server acting as a reverse proxy with automatic HTTPS.
+- `proxy-client-caddy`: A lightweight, extensible web server acting as a reverse proxy with automatic HTTPS.
 
 The Proxy-client container is connected to the `proxy-client-universe` network for public access. Additional networks (e.g., `proxy-client-authentik`) are used for private communication with backend services.
 
