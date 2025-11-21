@@ -161,6 +161,14 @@ prompt_for_configuration() {
     read -p "PROXY_CLIENT_SMTP_PORT [${PROXY_CLIENT_SMTP_PORT:-587}]: " input
     PROXY_CLIENT_SMTP_PORT=${input:-${PROXY_CLIENT_SMTP_PORT:-587}}
 
+    echo ""
+    echo "proxy-client-letsencrypt:"
+    read -p "PROXY_CLIENT_LETSENCRYPT_HOST [${PROXY_CLIENT_LETSENCRYPT_HOST:-acme-v02.api.letsencrypt.org}]: " input
+    PROXY_CLIENT_LETSENCRYPT_HOST=${input:-${PROXY_CLIENT_LETSENCRYPT_HOST:-acme-v02.api.letsencrypt.org}}
+
+    read -p "PROXY_CLIENT_LETSENCRYPT_PORT [${PROXY_CLIENT_LETSENCRYPT_PORT:-443}]: " input
+    PROXY_CLIENT_LETSENCRYPT_PORT=${input:-${PROXY_CLIENT_LETSENCRYPT_PORT:-443}}
+
     build_no_proxy_automation
 }
 
@@ -199,6 +207,10 @@ confirm_and_save_configuration() {
         "# proxy-client-smtp"
         "PROXY_CLIENT_SMTP_HOST=${PROXY_CLIENT_SMTP_HOST}"
         "PROXY_CLIENT_SMTP_PORT=${PROXY_CLIENT_SMTP_PORT}"
+        ""
+        "# proxy-client-letsencrypt"
+        "PROXY_CLIENT_LETSENCRYPT_HOST=${PROXY_CLIENT_LETSENCRYPT_HOST}"
+        "PROXY_CLIENT_LETSENCRYPT_PORT=${PROXY_CLIENT_LETSENCRYPT_PORT}"
         ""
     )
 
