@@ -35,7 +35,7 @@ jobs:
             exit 1
           fi
 
-          URL="https://hub.docker.com/v2/repositories/${DOCKER_REPO}/tags/${APP_VERSION}"
+          URL="https://hub.docker.com/v2/repositories/library/${DOCKER_REPO}/tags/${APP_VERSION}"
           echo "Checking if tag ${DOCKER_REPO}:${APP_VERSION} exists on Docker Hub..."
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
 
