@@ -7,7 +7,7 @@ services:
     container_name: proxy-client-caddy
     restart: unless-stopped
     depends_on:
-      - proxy-client-socks5h
+      - proxy-client-letsencrypt
     environment:
       AUTHENTIK_APP_HOSTNAME: ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
       AUTHENTIK_APP_CONTAINER: ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER}
