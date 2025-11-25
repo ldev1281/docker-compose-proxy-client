@@ -1,8 +1,6 @@
 # Caddy Reverse Proxy Docker Compose Deployment
 
-This repository provides a production-ready Docker Compose configuration for deploying the Caddy reverse proxy to securely manage traffic routing to backend services and external networks.
-
----
+This repository contains a Docker Compose configuration for deploying the Caddy reverse proxy to manage multiple backend services securely, as well as to handle connections to external networks.
 
 ## Setup Instructions
 
@@ -33,15 +31,17 @@ tar xzf /tmp/docker-compose-proxy-client.tar.gz -C /docker/proxy-client
 rm -f /tmp/docker-compose-proxy-client.tar.gz
 ```
 
-After extraction, the contents of the archive should be located directly in `/docker/proxy-client/` next to `docker-compose.yml`.
+After extraction, the contents of the archive should be located directly in `/docker/proxy-client/` (next to `docker-compose.yml`).
 
----
+### 2. Review Docker Compose Configuration
 
-### 2. Create Required Docker Networks
+Key service:
 
-Caddy proxy-client communicates with backend services through isolated internal networks.
+- `proxy-client`: A lightweight, extensible web server acting as a reverse proxy with automatic HTTPS.
 
-Create the required networks (if missing):
+The Proxy-client container is connected to the `proxy-client-universe` network for public access. Additional networks (e.g., `proxy-client-authentik`) are used for private communication with backend services.
+
+**Create required external Docker networks** (if they do not already exist):
 
 ```bash
 docker network create --driver bridge --internal proxy-client-authentik
@@ -50,68 +50,69 @@ docker network create --driver bridge --internal proxy-client-youtrack
 docker network create --driver bridge --internal proxy-client-gitlab
 ```
 
----
-
 ### 3. Configure and Start the Application
 
-The Caddyfile located at `./vol/proxy-client-caddy/etc/caddy/Caddyfile` is dynamically rendered from environment variables.
+The Caddyfile `./vol/proxy-client-caddy/etc/caddy/Caddyfile` is dynamically generated using the environment variables.
 
 Configuration Variables:
 
-| Variable Name | Description | Default Value |
-|--------------|-------------|---------------|
-| `PROXY_HOST` | Remote proxy hostname | `example.onion` |
-| `PROXY_FRP_PORT` | Remote FRP server port | `7000` |
-| `PROXY_FRP_TOKEN` | FRP authentication token | *(required)* |
-| `PROXY_SOCKS5H_PORT` | External SOCKS5h port (for SMTP) | `1080` |
-| `PROXY_CLIENT_CADDY_VERSION` | Caddy version | `2.10.0` |
-| `PROXY_CLIENT_CADDY_NO_PROXY` | Bypass list | `localhost,127.0.0.1,...` |
-| `PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME` | Authentik public domain | `authentik-app.example.com` |
-| `PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER` | Authentik internal hostname | `authentik-app` |
-| `PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME` | Firefly public domain | `firefly-app.example.com` |
-| `PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER` | Firefly internal hostname | `firefly-app` |
-| `PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME` | YouTrack public domain | `youtrack-app.example.com` |
-| `PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER` | YouTrack internal hostname | `youtrack-app` |
-| `PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME` | GitLab public domain | `gitlab-app.example.com` |
-| `PROXY_CLIENT_CADDY_GITLAB_APP_CONTAINER` | GitLab internal hostname | `gitlab-app` |
-| `PROXY_CLIENT_CADDY_REGISTRY_APP_HOSTNAME` | Docker Registry public domain | `registry.example.com` |
-| `PROXY_CLIENT_CADDY_REGISTRY_APP_CONTAINER` | Docker Registry internal hostname | `gitlab-app` |
-| `PROXY_CLIENT_SMTP_HOST` | External SMTP server | `smtp.mailgun.org` |
-| `PROXY_CLIENT_SMTP_PORT` | SMTP port | `587` |
+| Variable Name                                 | Description                                                                | Default Value               |
+|-----------------------------------------------|----------------------------------------------------------------------------|-----------------------------|
+| `PROXY_HOST`                                  | Hostname of the remote proxy server                                        | `example.onion`             |
+| `PROXY_FRP_PORT`                              | Port exposed by remote FRP server                                          | `7000`                      |
+| `PROXY_FRP_TOKEN`                             | Shared secret used for FRP authentication                                  | *(use token from frps)*     |
+| `PROXY_SOCKS5H_PORT`                          | Port exposed by SOCKS5 proxy server for external SMTP connection           | `1080`                      |
+| `PROXY_CLIENT_CADDY_VERSION`                  | Version of Caddy to use                                                    | `2.10.0`                    |
+| `PROXY_CLIENT_CADDY_NO_PROXY`                 | Comma-separated list of hosts/IPs to exclude from proxy                    | `localhost,127.0.0.1,...`   |
+| `PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME`   | Public domain name for Authentik                                           | `authentik-app.example.com` |
+| `PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER`  | Internal container hostname for Authentik service                          | `authentik-app`             |
+| `PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME`     | Public domain name for Firefly                                             | `firefly-app.example.com`   |
+| `PROXY_CLIENT_CADDY_FIREFLY_APP_CONTAINER`    | Internal container hostname for Firefly service                            | `firefly-app`               |
+| `PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME`    | Public domain name for YouTrack                                            | `youtrack-app.example.com`  |
+| `PROXY_CLIENT_CADDY_YOUTRACK_APP_CONTAINER`   | Internal container hostname for YouTrack service                           | `youtrack-app`              |
+| `PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME`      | Public domain name for GitLab                                              | `gitlab-app.example.com`    |
+| `PROXY_CLIENT_CADDY_GITLAB_APP_CONTAINER`     | Internal container hostname for GitLab service                             | `gitlab-app`                |
+| `PROXY_CLIENT_CADDY_REGISTRY_APP_HOSTNAME`    | Public domain name for Docker Registry                                     | `registry.example.com`      |
+| `PROXY_CLIENT_CADDY_REGISTRY_APP_CONTAINER`   | Internal container hostname for Docker Registry service                    | `gitlab-app`                |
+| `PROXY_CLIENT_SMTP_HOST`                      | External SMTP server hostname                                              | `smtp.mailgun.org`          |
+| `PROXY_CLIENT_SMTP_PORT`                      | External SMTP port (usually 587 for STARTTLS or 465 for SSL)               | `587`                       |
 
-To start the configuration workflow:
+To configure and launch all required services, run the provided script:
 
 ```bash
 ./tools/init.bash
 ```
 
----
+The script will:
 
-### 4. Start the Proxy-Client Service
+- Prompt you to enter configuration values (press `Enter` to accept defaults).
+- Generate secure random secrets automatically.
+- Save all settings to the `.env` file located at the project root.
 
-```bash
+**Important:**  
+Make sure to securely store your `.env` file locally for future reference or redeployment.
+
+### 4. Start the proxy-client Service
+
+```
 docker compose up -d
 ```
 
----
+You should see the `proxy-client` containers running.
 
 ### 5. Verify Running Containers
 
-```bash
+```
 docker compose ps
 ```
 
----
-
 ### 6. Persistent Data Storage
 
-Caddy uses the following volumes:
+Caddy stores ACME certificates, account keys, and other important data in the following volumes:
 
-- `./vol/proxy-client-caddy/data` — ACME certificates  
-- `./vol/proxy-client-caddy/config` — runtime configuration  
-- `./usr/local/bin/entrypoint.sh` — custom entrypoint  
-
----
+- `./vol/proxy-client-caddy/data:/data` – ACME certificates and keys
+- `./vol/proxy-client-caddy/config:/config` – Runtime configuration and state
+- `./usr/local/bin/entrypoint.sh` – Custom entrypoint script
 
 ### Example Directory Structure
 
@@ -134,17 +135,15 @@ Caddy uses the following volumes:
 └── .env
 ```
 
----
-
 ## Creating a Backup Task for Proxy-Client
 
-Create a task:
+To create a backup task for your proxy-client deployment using [`backup-tool`](https://github.com/ldev1281/backup-tool), add a new task file to `/etc/limbo-backup/rsync.conf.d/`:
 
 ```bash
 sudo nano /etc/limbo-backup/rsync.conf.d/20-proxy-client.conf.bash
 ```
 
-Insert:
+Paste the following contents:
 
 ```bash
 CMD_BEFORE_BACKUP="docker compose --project-directory /docker/proxy-client down"
@@ -152,11 +151,11 @@ CMD_AFTER_BACKUP="docker compose --project-directory /docker/proxy-client up -d"
 
 CMD_BEFORE_RESTORE="docker compose --project-directory /docker/proxy-client down || true"
 CMD_AFTER_RESTORE=(
-  "docker network create --driver bridge --internal proxy-client-authentik || true"
-  "docker network create --driver bridge --internal proxy-client-firefly || true"
-  "docker network create --driver bridge --internal proxy-client-youtrack || true"
-  "docker network create --driver bridge --internal proxy-client-gitlab || true"
-  "docker compose --project-directory /docker/proxy-client up -d"
+"docker network create --driver bridge --internal proxy-client-authentik || true"
+"docker network create --driver bridge --internal proxy-client-firefly || true"
+"docker network create --driver bridge --internal proxy-client-youtrack || true"
+"docker network create --driver bridge --internal proxy-client-gitlab || true"
+"docker compose --project-directory /docker/proxy-client up -d"
 )
 
 INCLUDE_PATHS=(
@@ -164,8 +163,6 @@ INCLUDE_PATHS=(
 )
 ```
 
----
-
 ## License
 
-Licensed under the Prostokvashino License. See `LICENSE` for details.
+Licensed under the Prostokvashino License. See [LICENSE](LICENSE) for details.
