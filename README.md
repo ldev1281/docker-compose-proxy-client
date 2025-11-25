@@ -98,13 +98,15 @@ Make sure to securely store your `.env` file locally for future reference or red
 docker compose up -d
 ```
 
-You should see the `proxy-client` containers running.
+This will start proxy-client and make your configured domains available.
 
 ### 5. Verify Running Containers
 
 ```
 docker compose ps
 ```
+
+You should see the `proxy-client` containers running.
 
 ### 6. Persistent Data Storage
 
