@@ -114,6 +114,9 @@ Caddy stores ACME certificates, account keys, and other important data in the fo
 - `./vol/proxy-client-caddy/config:/config` – Runtime configuration and state
 - `./usr/local/bin/entrypoint.sh` – Custom entrypoint script
 
+Make sure these directories are backed up to avoid losing certificates and configuration.
+
+---
 ### Example Directory Structure
 
 ```
