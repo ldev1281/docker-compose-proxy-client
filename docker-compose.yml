@@ -61,7 +61,7 @@ services:
   # letsencrypt proxy from caddy
   proxy-client-letsencrypt:
     image: ghcr.io/ldev1281/docker-socat-socks5:latest
-    container_name: proxy-client-socks5h
+    container_name: proxy-client-letsencrypt
     restart: unless-stopped
     environment:
       LISTEN_PORT: ${PROXY_CLIENT_LETSENCRYPT_PORT}
