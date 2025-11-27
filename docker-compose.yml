@@ -124,6 +124,23 @@ services:
         aliases:
           - ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
 
+  proxy-client-github:
+    image: ghcr.io/ldev1281/docker-socat-socks5:latest
+    container_name: proxy-client-github
+    restart: unless-stopped
+    environment:
+      LISTEN_PORT: ${PROXY_CLIENT_GITHUB_PORT}
+      TARGET_HOST: ${PROXY_CLIENT_GITHUB_HOST}
+      TARGET_PORT: ${PROXY_CLIENT_GITHUB_PORT}
+      SOCKS5_HOST: ${PROXY_HOST:-}
+      SOCKS5_PORT: ${PROXY_SOCKS5H_PORT:-}
+    networks:
+      proxy-client-universe:
+      proxy-client-youtrack:
+        aliases:
+          - github.com
+          - api.github.com
+
 networks:
 
   proxy-client-universe:
