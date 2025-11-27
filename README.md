@@ -23,10 +23,10 @@ tar xzf /tmp/docker-compose-proxy-client.tar.gz -C /docker/proxy-client
 rm -f /tmp/docker-compose-proxy-client.tar.gz
 ```
 
-Or download a **specific** release (for example `2025.1.100100`):
+Or download a **specific** release (for example `2.10.2-0.2):
 
 ```bash
-curl -fsSL "https://github.com/ldev1281/docker-compose-proxy-client/releases/download/2025.1.100100/docker-compose-proxy-client.tar.gz" -o /tmp/docker-compose-proxy-client.tar.gz
+curl -fsSL "https://github.com/ldev1281/docker-compose-proxy-client/releases/download/2.10.2-0.2/docker-compose-proxy-client.tar.gz" -o /tmp/docker-compose-proxy-client.tar.gz
 tar xzf /tmp/docker-compose-proxy-client.tar.gz -C /docker/proxy-client
 rm -f /tmp/docker-compose-proxy-client.tar.gz
 ```
