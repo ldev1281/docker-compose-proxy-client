@@ -4,15 +4,34 @@ This repository contains a Docker Compose configuration for deploying the Caddy 
 
 ## Setup Instructions
 
-### 1. Clone the Repository
+### 1. Download and Extract the Release
 
-Clone the project to your server in the `/docker/proxy-client/` directory:
+Download the packaged release to your server into the `/docker/proxy-client/` directory and extract it there.
 
-```
+Create the target directory and enter it:
+
+```bash
 mkdir -p /docker/proxy-client
 cd /docker/proxy-client
-git clone https://github.com/ldev1281/docker-compose-proxy-client.git .
 ```
+
+You can either download the **latest** release:
+
+```bash
+curl -fsSL "https://github.com/ldev1281/docker-compose-proxy-client/releases/latest/download/docker-compose-proxy-client.tar.gz" -o /tmp/docker-compose-proxy-client.tar.gz
+tar xzf /tmp/docker-compose-proxy-client.tar.gz -C /docker/proxy-client
+rm -f /tmp/docker-compose-proxy-client.tar.gz
+```
+
+Or download a **specific** release (for example `2.10.2-0.2):
+
+```bash
+curl -fsSL "https://github.com/ldev1281/docker-compose-proxy-client/releases/download/2.10.2-0.2/docker-compose-proxy-client.tar.gz" -o /tmp/docker-compose-proxy-client.tar.gz
+tar xzf /tmp/docker-compose-proxy-client.tar.gz -C /docker/proxy-client
+rm -f /tmp/docker-compose-proxy-client.tar.gz
+```
+
+After extraction, the contents of the archive should be located directly in `/docker/proxy-client/` (next to `docker-compose.yml`).
 
 ### 2. Review Docker Compose Configuration
 
@@ -32,7 +51,6 @@ docker network create --driver bridge --internal proxy-client-firefly
 docker network create --driver bridge --internal proxy-client-youtrack
 docker network create --driver bridge --internal proxy-client-gitlab
 ```
-
 
 ### 3. Configure and Start the Application
 
@@ -78,7 +96,6 @@ The script will:
 **Important:**  
 Make sure to securely store your `.env` file locally for future reference or redeployment.
 
-
 ### 4. Start the proxy-client Service
 
 ```
@@ -106,7 +123,6 @@ Caddy stores ACME certificates, account keys, and other important data in the fo
 Make sure these directories are backed up to avoid losing certificates and configuration.
 
 ---
-
 ### Example Directory Structure
 
 ```
@@ -127,7 +143,6 @@ Make sure these directories are backed up to avoid losing certificates and confi
 │               └── Caddyfile
 └── .env
 ```
----
 
 ## Creating a Backup Task for Proxy-Client
 
@@ -156,8 +171,6 @@ INCLUDE_PATHS=(
   "/docker/proxy-client"
 )
 ```
-
----
 
 ## License
 
