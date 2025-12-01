@@ -82,6 +82,8 @@ Configuration Variables:
 | `PROXY_CLIENT_LETSENCRYPT_PORT`               | Port for Let’s Encrypt ACME API                                            | `443`                                |
 | `PROXY_CLIENT_GITHUB_HOST`                    | Hostname for GitHub access through the proxy                               | `github.com`                         |
 | `PROXY_CLIENT_GITHUB_PORT`                    | Port for GitHub HTTPS connections                                          | `443`                                |
+| `PROXY_CLIENT_GITHUB_API_HOST`                | Hostname for GitHub API access through the proxy                           | `api.github.com`                     |
+| `PROXY_CLIENT_GITHUB_API_PORT`                | Port for GitHub API HTTPS connections                                      | `443`                                |
 
 To configure and launch all required services, run the provided script:
 
