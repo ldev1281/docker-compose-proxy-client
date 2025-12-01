@@ -80,6 +80,10 @@ Configuration Variables:
 | `PROXY_CLIENT_SMTP_PORT`                      | External SMTP port (587 STARTTLS / 465 SSL)                                | `587`                                |
 | `PROXY_CLIENT_LETSENCRYPT_HOST`               | Hostname of Let’s Encrypt ACME API (used for certificate requests)         | `acme-v02.api.letsencrypt.org`       |
 | `PROXY_CLIENT_LETSENCRYPT_PORT`               | Port for Let’s Encrypt ACME API                                            | `443`                                |
+| `PROXY_CLIENT_GITHUB_HOST`                    | Hostname for GitHub access through the proxy                               | `github.com`                         |
+| `PROXY_CLIENT_GITHUB_PORT`                    | Port for GitHub HTTPS connections                                          | `443`                                |
+| `PROXY_CLIENT_GITHUB_API_HOST`                | Hostname for GitHub API access through the proxy                           | `api.github.com`                     |
+| `PROXY_CLIENT_GITHUB_API_PORT`                | Port for GitHub API HTTPS connections                                      | `443`                                |
 
 To configure and launch all required services, run the provided script:
 
@@ -123,6 +127,7 @@ Caddy stores ACME certificates, account keys, and other important data in the fo
 Make sure these directories are backed up to avoid losing certificates and configuration.
 
 ---
+
 ### Example Directory Structure
 
 ```
