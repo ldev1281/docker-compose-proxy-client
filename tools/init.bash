@@ -175,7 +175,7 @@ prompt_for_configuration() {
     PROXY_CLIENT_GITHUB_HOST=${input:-${PROXY_CLIENT_GITHUB_HOST:-github.com}}
 
     read -p "PROXY_CLIENT_GITHUB_PORT [${PROXY_CLIENT_GITHUB_PORT:-443}]: " input
-    PROXY_CLIENT_GITHUBT_PORT=${input:-${PROXY_CLIENT_GITHUB_PORT:-443}}
+    PROXY_CLIENT_GITHUB_PORT=${input:-${PROXY_CLIENT_GITHUB_PORT:-443}}
 
     build_no_proxy_automation
 }
@@ -222,7 +222,7 @@ confirm_and_save_configuration() {
         ""
         "# proxy-client-github"
         "PROXY_CLIENT_GITHUB_HOST=${PROXY_CLIENT_GITHUB_HOST}"
-        "PROXY_CLIENT_GITHUBT_PORT=${PROXY_CLIENT_GITHUB_PORT}"
+        "PROXY_CLIENT_GITHUB_PORT=${PROXY_CLIENT_GITHUB_PORT}"
         ""        
     )
 
