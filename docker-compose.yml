@@ -29,6 +29,7 @@ services:
       proxy-client-firefly:
       proxy-client-youtrack:
       proxy-client-gitlab:
+      proxy-client-gitlab-runner:      
 
   # frpc for connect to frps
   proxy-client-caddy-frpc:
@@ -156,6 +157,18 @@ services:
         aliases:
           - api.github.com
 
+  proxy-client-gitlab-runner:
+    image: ghcr.io/ldev1281/docker-socat-socks5:latest
+    container_name: proxy-client-gitlab-runner
+    restart: unless-stopped
+    environment:
+      LISTEN_PORT: ${PROXY_SOCKS5H_PORT}
+      TARGET_HOST: ${PROXY_HOST}
+      TARGET_PORT: ${PROXY_SOCKS5H_PORT}
+    networks:
+      proxy-client-universe:
+      proxy-client-gitlab-runner:
+
 networks:
 
   proxy-client-universe:
@@ -181,4 +194,8 @@ networks:
 
   proxy-client-gitlab:
     name: proxy-client-gitlab
+    external: true
+
+  proxy-client-gitlab-runner:
+    name: proxy-client-gitlab-runner
     external: true

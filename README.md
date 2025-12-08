@@ -50,6 +50,7 @@ docker network create --driver bridge --internal proxy-client-authentik
 docker network create --driver bridge --internal proxy-client-firefly
 docker network create --driver bridge --internal proxy-client-youtrack
 docker network create --driver bridge --internal proxy-client-gitlab
+docker network create --driver bridge --internal proxy-client-gitlab-runner
 ```
 
 ### 3. Configure and Start the Application
