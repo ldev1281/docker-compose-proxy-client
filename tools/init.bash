@@ -8,7 +8,7 @@ BACKUP_TASKS_SRC_DIR="${SCRIPT_DIR}/../etc/limbo-backup/rsync.conf.d"
 BACKUP_TASKS_DST_DIR="/etc/limbo-backup/rsync.conf.d"
 
 REQUIRED_TOOLS="docker limbo-backup.bash"
-REQUIRED_NETS="proxy-client-authentik proxy-client-firefly proxy-client-youtrack proxy-client-gitlab"
+REQUIRED_NETS="proxy-client-authentik proxy-client-firefly proxy-client-youtrack proxy-client-gitlab proxy-client-gitlab-runner"
 BACKUP_TASKS="10-proxy-client.conf.bash"
 
 CURRENT_PROXY_CLIENT_CADDY_VERSION="2.10.2"
