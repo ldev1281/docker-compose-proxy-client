@@ -33,6 +33,9 @@ services:
       proxy-client-gitlab:
         aliases:
           - ${PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME}
+      proxy-client-gitlab-runner:
+        aliases:
+          - ${PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME}         
 
   # frpc for connect to frps
   proxy-client-caddy-frpc:
@@ -185,4 +188,8 @@ networks:
 
   proxy-client-gitlab:
     name: proxy-client-gitlab
+    external: true
+
+  proxy-client-gitlab-runner:
+    name: proxy-client-gitlab-runner
     external: true

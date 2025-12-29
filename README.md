@@ -50,6 +50,7 @@ docker network create --driver bridge --internal proxy-client-authentik
 docker network create --driver bridge --internal proxy-client-firefly
 docker network create --driver bridge --internal proxy-client-youtrack
 docker network create --driver bridge --internal proxy-client-gitlab
+docker network create --driver bridge --internal proxy-client-gitlab-runner
 ```
 
 ### 3. Configure and Start the Application
@@ -169,6 +170,7 @@ CMD_AFTER_RESTORE=(
 "docker network create --driver bridge --internal proxy-client-firefly || true"
 "docker network create --driver bridge --internal proxy-client-youtrack || true"
 "docker network create --driver bridge --internal proxy-client-gitlab || true"
+"docker network create --driver bridge --internal proxy-client-gitlab-runner || true"
 "docker compose --project-directory /docker/proxy-client up -d"
 )
 
