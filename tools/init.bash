@@ -187,8 +187,8 @@ prompt_for_configuration() {
 
     echo ""
     echo "proxy-client-gitlab-to-s3:"
-    read -p "PROXY_CLIENT_S3_REGION [${PROXY_CLIENT_S3_REGION:-ap-southeast-1}]: " input
-    PROXY_CLIENT_S3_REGION=${input:-${PROXY_CLIENT_S3_REGION:-ap-southeast-1}}
+    read -p "PROXY_CLIENT_S3_HOST [${PROXY_CLIENT_S3_HOST:-s3.amazonaws.com}]: " input
+    PROXY_CLIENT_S3_HOST=${input:-${PROXY_CLIENT_S3_HOST:-s3.amazonaws.com}}
 
     read -p "PROXY_CLIENT_S3_PORT [${PROXY_CLIENT_S3_PORT:-443}]: " input
     PROXY_CLIENT_S3_PORT=${input:-${PROXY_CLIENT_S3_PORT:-443}}
@@ -245,7 +245,7 @@ confirm_and_save_configuration() {
         "PROXY_CLIENT_GITHUB_API_PORT=${PROXY_CLIENT_GITHUB_API_PORT}"
         ""
         "# proxy-client-gitlab-to-s3"
-        "PROXY_CLIENT_S3_REGION=${PROXY_CLIENT_S3_REGION}"
+        "PROXY_CLIENT_S3_HOST=${PROXY_CLIENT_S3_HOST}"
         "PROXY_CLIENT_S3_PORT=${PROXY_CLIENT_S3_PORT}"
         ""
     )
