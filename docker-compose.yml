@@ -131,6 +131,7 @@ services:
         aliases:
           - ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
 
+# github proxy 
   proxy-client-github:
     image: ghcr.io/ldev1281/docker-socat-socks5:latest
     container_name: proxy-client-github
@@ -147,6 +148,7 @@ services:
         aliases:
           - github.com
 
+# github api proxy 
   proxy-client-github-api:
     image: ghcr.io/ldev1281/docker-socat-socks5:latest
     container_name: proxy-client-github-api
@@ -163,6 +165,7 @@ services:
         aliases:
           - api.github.com
 
+# s3 proxy 
   proxy-client-gitlab-to-s3:
     image: ghcr.io/ldev1281/docker-socat-socks5:latest
     container_name: proxy-client-gitlab-to-s3
@@ -174,10 +177,24 @@ services:
       SOCKS5_HOST: ${PROXY_HOST:-}
       SOCKS5_PORT: ${PROXY_SOCKS5H_PORT:-}
     networks:
+      proxy-client-universe:
       proxy-client-gitlab:
         aliases:
           - ${PROXY_CLIENT_S3_HOST}
 
+# runner proxy 
+  proxy-client-socks5h:
+    image: ghcr.io/ldev1281/docker-socat-socks5:latest
+    container_name: proxy-client-socks5h
+    restart: unless-stopped
+    environment:
+      LISTEN_PORT: ${PROXY_SOCKS5H_PORT}
+      TARGET_HOST: ${PROXY_HOST}
+      TARGET_PORT: ${PROXY_SOCKS5H_PORT}
+    networks:
+      proxy-client-universe:
+      proxy-client-gitlab-runner:
+      
 networks:
 
   proxy-client-universe:
