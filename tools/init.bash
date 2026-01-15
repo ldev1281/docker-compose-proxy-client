@@ -68,36 +68,6 @@ load_existing_env() {
     set +o allexport
 }
 
-build_no_proxy_automation() {
-    local default_no_proxy_items=(
-        "localhost"
-        "127.0.0.1"
-        "::1"
-        "*.local"
-        "*.localhost"
-        "10.0.0.0/8"
-        "172.16.0.0/12"
-        "192.168.0.0/16"
-    )
-
-    local items=("${default_no_proxy_items[@]}")
-    for var_name in $(compgen -v); do
-        [[ "$var_name" =~ _APP_CONTAINER$ ]] && [[ -n "${!var_name-}" ]] && items+=("${!var_name}")
-    done
-
-    declare -A seen
-    local ordered_unique=()
-    for item in "${items[@]}"; do
-        if [[ ! -v "seen[$item]" ]]; then
-            seen["$item"]=1
-            ordered_unique+=("$item")
-        fi
-    done
-
-    local IFS=, 
-    export PROXY_CLIENT_CADDY_NO_PROXY="${ordered_unique[*]}"
-}
-
 prompt_for_configuration() {
     echo "Enter configuration values (press Enter to keep current/default value):"
     echo ""
@@ -192,8 +162,6 @@ prompt_for_configuration() {
 
     read -p "PROXY_CLIENT_S3_PORT [${PROXY_CLIENT_S3_PORT:-443}]: " input
     PROXY_CLIENT_S3_PORT=${input:-${PROXY_CLIENT_S3_PORT:-443}}
-
-    build_no_proxy_automation
 }
 
 confirm_and_save_configuration() {
@@ -216,7 +184,6 @@ confirm_and_save_configuration() {
         ""
         "# proxy-client-caddy"
         "PROXY_CLIENT_CADDY_VERSION=${PROXY_CLIENT_CADDY_VERSION}"
-        "PROXY_CLIENT_CADDY_NO_PROXY=${PROXY_CLIENT_CADDY_NO_PROXY}"
         "PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME=${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}"
         "PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER=${PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER}"
         "PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME=${PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME}"
