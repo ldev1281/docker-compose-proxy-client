@@ -185,6 +185,14 @@ prompt_for_configuration() {
     read -p "PROXY_CLIENT_GITHUB_API_PORT [${PROXY_CLIENT_GITHUB_API_PORT:-443}]: " input
     PROXY_CLIENT_GITHUB_API_PORT=${input:-${PROXY_CLIENT_GITHUB_API_PORT:-443}}
 
+    echo ""
+    echo "proxy-client-gitlab-to-s3:"
+    read -p "PROXY_CLIENT_S3_HOST [${PROXY_CLIENT_S3_HOST:-s3.amazonaws.com}]: " input
+    PROXY_CLIENT_S3_HOST=${input:-${PROXY_CLIENT_S3_HOST:-s3.amazonaws.com}}
+
+    read -p "PROXY_CLIENT_S3_PORT [${PROXY_CLIENT_S3_PORT:-443}]: " input
+    PROXY_CLIENT_S3_PORT=${input:-${PROXY_CLIENT_S3_PORT:-443}}
+
     build_no_proxy_automation
 }
 
@@ -235,7 +243,11 @@ confirm_and_save_configuration() {
         "# proxy-client-github-api"
         "PROXY_CLIENT_GITHUB_API_HOST=${PROXY_CLIENT_GITHUB_API_HOST}"
         "PROXY_CLIENT_GITHUB_API_PORT=${PROXY_CLIENT_GITHUB_API_PORT}"
-        ""       
+        ""
+        "# proxy-client-gitlab-to-s3"
+        "PROXY_CLIENT_S3_HOST=${PROXY_CLIENT_S3_HOST}"
+        "PROXY_CLIENT_S3_PORT=${PROXY_CLIENT_S3_PORT}"
+        ""
     )
 
     echo ""
@@ -296,4 +308,3 @@ confirm_and_save_configuration
 create_networks
 create_backup_tasks
 setup_containers
-
