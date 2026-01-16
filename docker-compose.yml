@@ -30,9 +30,11 @@ services:
       proxy-client-youtrack:
         aliases:
           - ${PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME}
+          - ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}          
       proxy-client-gitlab:
         aliases:
           - ${PROXY_CLIENT_CADDY_YOUTRACK_APP_HOSTNAME}
+          - ${PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME}
       proxy-client-gitlab-runner:
         aliases:
           - ${PROXY_CLIENT_CADDY_GITLAB_APP_HOSTNAME}
