@@ -66,7 +66,6 @@ Configuration Variables:
 | `PROXY_FRP_TOKEN`                             | Shared secret used for FRP authentication                                  | *(use token from frps)*              |
 | `PROXY_SOCKS5H_PORT`                          | Port exposed by SOCKS5h proxy server for external connections              | `1080`                               |
 | `PROXY_CLIENT_CADDY_VERSION`                  | Version of Caddy to use                                                    | `2.10.0`                             |
-| `PROXY_CLIENT_CADDY_NO_PROXY`                 | Comma-separated list of hosts/IPs to exclude from proxy                    | `localhost,127.0.0.1,...`            |
 | `PROXY_CLIENT_CADDY_AUTHENTIK_APP_HOSTNAME`   | Public domain name for Authentik                                           | `authentik-app.example.com`          |
 | `PROXY_CLIENT_CADDY_AUTHENTIK_APP_CONTAINER`  | Internal container hostname for Authentik service                          | `authentik-app`                      |
 | `PROXY_CLIENT_CADDY_FIREFLY_APP_HOSTNAME`     | Public domain name for Firefly                                             | `firefly-app.example.com`            |
