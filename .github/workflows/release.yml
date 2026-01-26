@@ -85,7 +85,7 @@ jobs:
           fi
 
           TAG="${APP_VERSION}${TAG_SUFFIX}${MAJOR}.${MINOR}"
-          echo "Next tag will be: $TAG"
+          echo "Next tag: $TAG"
 
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "Tag $TAG already exists — aborting."
