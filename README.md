@@ -84,7 +84,8 @@ Configuration Variables:
 | `PROXY_CLIENT_GITHUB_PORT`                    | Port for GitHub HTTPS connections                                          | `443`                                |
 | `PROXY_CLIENT_GITHUB_API_HOST`                | Hostname for GitHub API access through the proxy                           | `api.github.com`                     |
 | `PROXY_CLIENT_GITHUB_API_PORT`                | Port for GitHub API HTTPS connections                                      | `443`                                |
-| `PROXY_CLIENT_S3_HOST`                      | S3 url used by GitLab for object storage access through the proxy       | `s3.amazonaws.com`                     |
+| `PROXY_CLIENT_S3_REGION`                      | AWS region used to build the S3 endpoint for GitLab object storage          | `ap-southeast-1`                     |
+| `PROXY_CLIENT_S3_HOST`                        | S3 url used by GitLab for object storage access through the proxy           | `s3.ap-southeast-1.amazonaws.com`    |
 | `PROXY_CLIENT_S3_PORT`                        | Port for S3 HTTPS connections                                              | `443`                                |
 
 To configure and launch all required services, run the provided script:
