@@ -161,6 +161,12 @@ prompt_for_configuration() {
     read -p "PROXY_CLIENT_S3_REGION [${PROXY_CLIENT_S3_REGION:-ap-southeast-1}]: " input
     PROXY_CLIENT_S3_REGION=${input:-${PROXY_CLIENT_S3_REGION:-ap-southeast-1}}
 
+    if [[ "${PROXY_CLIENT_S3_REGION}" == "us-east-1" ]]; then
+        PROXY_CLIENT_S3_HOST="s3.amazonaws.com"
+    else
+        PROXY_CLIENT_S3_HOST="s3.${PROXY_CLIENT_S3_REGION}.amazonaws.com"
+    fi
+
     read -p "PROXY_CLIENT_S3_PORT [${PROXY_CLIENT_S3_PORT:-443}]: " input
     PROXY_CLIENT_S3_PORT=${input:-${PROXY_CLIENT_S3_PORT:-443}}
 }
@@ -214,7 +220,7 @@ confirm_and_save_configuration() {
         ""
         "# proxy-client-gitlab-to-s3"
         "PROXY_CLIENT_S3_REGION=${PROXY_CLIENT_S3_REGION}"
-        "PROXY_CLIENT_S3_HOST=s3.${PROXY_CLIENT_S3_REGION}.amazonaws.com"
+        "PROXY_CLIENT_S3_HOST=${PROXY_CLIENT_S3_HOST}"
         "PROXY_CLIENT_S3_PORT=${PROXY_CLIENT_S3_PORT}"
         ""
     )
